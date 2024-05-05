@@ -7,13 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Poedle.Server", "Poedle.Ser
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "poedle.client", "poedle.client\poedle.client.esproj", "{0C2C927E-F2B2-49D7-9F32-8946C62CEBAF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PoeWiki", "PoeWiki", "{2D10C08B-0F0E-4C99-BD82-ABD8177C397A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoeWikiApi", "PoeWiki\PoeWikiApi\PoeWikiApi.csproj", "{6999F3FF-D3DA-470F-8874-758DE786DF1B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugLogger", "DebugLogger", "{CA9901B7-C6B8-4123-AD1B-B7E21DEBE69C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugLogger", "DebugLogger\DebugLogger\DebugLogger.csproj", "{3EB06326-2F16-4A3A-88B2-8A703ECCD96D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoedleTestConsole", "PoedleTestConsole\PoedleTestConsole.csproj", "{D23C2777-D57A-4945-8A8F-65ECA2F251FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,21 +25,13 @@ Global
 		{0C2C927E-F2B2-49D7-9F32-8946C62CEBAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C2C927E-F2B2-49D7-9F32-8946C62CEBAF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0C2C927E-F2B2-49D7-9F32-8946C62CEBAF}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{6999F3FF-D3DA-470F-8874-758DE786DF1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6999F3FF-D3DA-470F-8874-758DE786DF1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6999F3FF-D3DA-470F-8874-758DE786DF1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6999F3FF-D3DA-470F-8874-758DE786DF1B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EB06326-2F16-4A3A-88B2-8A703ECCD96D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EB06326-2F16-4A3A-88B2-8A703ECCD96D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EB06326-2F16-4A3A-88B2-8A703ECCD96D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EB06326-2F16-4A3A-88B2-8A703ECCD96D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D23C2777-D57A-4945-8A8F-65ECA2F251FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23C2777-D57A-4945-8A8F-65ECA2F251FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23C2777-D57A-4945-8A8F-65ECA2F251FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23C2777-D57A-4945-8A8F-65ECA2F251FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{6999F3FF-D3DA-470F-8874-758DE786DF1B} = {2D10C08B-0F0E-4C99-BD82-ABD8177C397A}
-		{3EB06326-2F16-4A3A-88B2-8A703ECCD96D} = {CA9901B7-C6B8-4123-AD1B-B7E21DEBE69C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F105DC9-4B12-41F9-A393-D932AA09A0AB}
