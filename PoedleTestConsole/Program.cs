@@ -18,9 +18,27 @@ namespace Poedle
             // Set db
             PoeDbManager db = new("..\\..\\..\\..\\Poedle.Server\\PoeDb\\PoeDb.db", log);
 
-            db.ResetAll();
-
             FindUniqueByParamGameController game = new(db, log);
+
+            while (true)
+            {
+                Console.Write(":::: ");
+                string? cmd = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(cmd))
+                {
+                    continue;
+                }
+
+                if (cmd.Equals("LOAD", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    db.ResetAll();
+                }
+
+                if (cmd.Equals("START", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    break;
+                }
+            }
 
             while (true)
             {
@@ -34,11 +52,20 @@ namespace Poedle
                     Console.WriteLine("---------------------------------");
                     // Get a guess
                     Console.Write("GUESS: ");
-                    string guess = Console.ReadLine();
-                    int guessInt;
+                    string? guess = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(guess))
+                    {
+                        continue;
+                    }
+
+                    if (guess.Equals("HINT", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        game.ToggleHints();
+                        continue;
+                    }
 
                     FindUniqueByParamGameController.GuessResult? result;
-                    if (int.TryParse(guess, out guessInt))
+                    if (int.TryParse(guess, out int guessInt))
                     {
                          result = game.MakeGuess(guessInt);
                     }
@@ -57,20 +84,20 @@ namespace Poedle
                     if (result.Value.IsCorrect)
                     {
                         // Correct - You Win
-                        Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result));
+                        Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result, game.AreHintsEnabled));
                         Console.WriteLine($"{guess} was correct! Congrats and thanks for playing!");
                         break;
                     }
 
                     // Wrong - Try Again
                     // Add to guessed list
-                    Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result));
+                    Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result, game.AreHintsEnabled));
                     Console.WriteLine();
                 }
 
                 Console.WriteLine("PLAY AGAIN?");
-                string yesno = Console.ReadLine();
-                if(yesno != "y")
+                string? yesno = Console.ReadLine();
+                if(string.IsNullOrWhiteSpace(yesno) || yesno != "y")
                 {
                     break;
                 }

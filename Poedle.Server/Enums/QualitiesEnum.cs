@@ -5,37 +5,33 @@
         public enum Qualities
         {
             NONE,
+            ABYSSAL,
+            ANOINTABLE,
             CORRUPTED,
-            FRACTURED,
-            REPLICA,
-            SYNTHESISED,
-            VEILED,
             EATER_OF_WORLDS,
-            SEARING_EXARCH,
             ELDER,
-            SHAPER
+            FRACTURED,
+            GRANTS_SKILL,
+            REPLICA,
+            SEARING_EXARCH,
+            SHAPER,
+            SYNTHESISED,
+            TRIGGERS_SKILL,
+            UPGRADEABLE,
+            VEILED,
         }
 
         private readonly static Dictionary<Qualities, string> _enumToStrExceptions = new()
         {
             { Qualities.EATER_OF_WORLDS, "Eater of Worlds" },
-            { Qualities.SEARING_EXARCH, "Searing Exarch" }
-        };
-
-        private readonly static Dictionary<string, Qualities> _strToEnumExceptions = new()
-        {
-            { "Eater of Worlds", Qualities.EATER_OF_WORLDS },
-            { "Searing Exarch", Qualities.SEARING_EXARCH }
+            { Qualities.GRANTS_SKILL, "Grants Skill" },
+            { Qualities.SEARING_EXARCH, "Searing Exarch" },
+            { Qualities.TRIGGERS_SKILL, "Triggers Skill" }
         };
 
         public static string EnumToStr(Qualities pEnum)
         {
             return EnumUtil.GetNameByValue(pEnum, _enumToStrExceptions);
-        }
-
-        public static Qualities StrToEnum(string pEnum)
-        {
-            return EnumUtil.GetEnumByName(pEnum, _strToEnumExceptions);
         }
     }
 }

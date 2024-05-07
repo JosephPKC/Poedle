@@ -15,9 +15,8 @@ namespace Poedle.PoeDb.Models
         public ushort ReqInt { get; set; }
         public ushort ReqStr { get; set; }
 
-        // Corrupted, Fractured, Replica, Synthesised, Veiled, Eater Influence, Exarch Influence
         public List<QualitiesEnum.Qualities> Qualities { get; set; } = [];
-        // Boss Drop, Temple of Atzoatl, Corruption Altar, Vendor Recipe, Labyrinth, Abyssal Depths, Blighted Maps, Breach, Simulacrum, Expedition, Harbinger, Heist Curio, Domain of TImeless Conflict, Ritual Altar, Sanctum, Synthesis Map, Ultimatum Trial, Warband, Fishing
         public List<DropSourcesEnum.DropSources> DropSources { get; set; } = [];
+        public List<DropSourcesSpecificEnum.DropSourcesSpecific> DropSourcesSpecific { get; set; } = [];
     }
 }

@@ -3,6 +3,7 @@
 using Poedle.PoeDb.Models;
 using Poedle.PoeWiki.Models;
 using Poedle.Enums;
+using Poedle.Utils.Lists;
 using Poedle.Utils.Strings;
 
 namespace Poedle.PoeDb.Mappers
@@ -29,7 +30,8 @@ namespace Poedle.PoeDb.Mappers
                 ReqInt  = pUnique.ReqInt,
                 ReqStr = pUnique.ReqStr,
                 Qualities = GetQualities(pUnique),
-                DropSources = GetDropSources(pUnique)
+                DropSources = GetDropSources(pUnique),
+                DropSourcesSpecific = GetDropSourcesSpecific(pUnique)
             };
 
             BaseModelMapper.SetBasePoeFields(unique, pUnique);
@@ -62,17 +64,17 @@ namespace Poedle.PoeDb.Mappers
         {
             string cleanedText = HTMLTagCleaner.ParseHTMLTags(pFlavourText);
             // Clean up the lore embeds
-            if (cleanedText.Contains("(lore)|"))
+            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "(lore)|"))
             {
                 cleanedText = LoreEmbedRegex().Replace(cleanedText, "");
             }
             // Clean up the atziri and breach blessing upgrade special texts
-            if (cleanedText.Contains("-help"))
+            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "-help"))
             {
                 cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText);
             }
             // Clean up the harbinger glyphs
-            if (cleanedText.Contains("class=\"glyph"))
+            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "class=\"glyph"))
             {
                 cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText, "<glyph?>");
             }
@@ -92,7 +94,7 @@ namespace Poedle.PoeDb.Mappers
             cleanedText = HTMLTagCleaner.ParseHTMLTags(cleanedText);
 
             // Clean up the unique mod line
-            if (cleanedText.Contains("-unique"))
+            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "-unique"))
             {
                 cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText, "\n");
             }
@@ -100,40 +102,95 @@ namespace Poedle.PoeDb.Mappers
             return StringCleaner.SeparateStringLines(cleanedText);
         }
 
+        /// <summary>
+        /// Gets all of the special qualities for the item.
+        /// </summary>
+        /// <param name="pUnique"></param>
+        /// <returns></returns>
         private static List<QualitiesEnum.Qualities> GetQualities(PoeWikiUnique pUnique)
         {
             List<QualitiesEnum.Qualities> qualities = [];
 
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.CORRUPTED, pUnique.IsCorrupted);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.FRACTURED, pUnique.IsFractured);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.REPLICA, pUnique.IsReplica);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.SYNTHESISED, pUnique.IsSynthesised);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.VEILED, pUnique.IsVeiled);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.EATER_OF_WORLDS, pUnique.IsEaterOfWorlds);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.SEARING_EXARCH, pUnique.IsSearingExarch);
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.ELDER, pUnique.Influences.Contains("elder"));
-            ConditionalAddToList(qualities, QualitiesEnum.Qualities.SHAPER, pUnique.Influences.Contains("shaper"));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.ABYSSAL, UniqueTagsParser.IsAbyssal(pUnique));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.ANOINTABLE, UniqueTagsParser.IsAnointable(pUnique));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.CORRUPTED, pUnique.IsCorrupted);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.EATER_OF_WORLDS, pUnique.IsEaterOfWorlds);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.ELDER, MiscStringUtils.ContainsIgnoreCase(pUnique.Influences, "Elder"));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.FRACTURED, pUnique.IsFractured);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.GRANTS_SKILL, UniqueTagsParser.IsGrantsSkills(pUnique));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.REPLICA, pUnique.IsReplica);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.SEARING_EXARCH, pUnique.IsSearingExarch);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.SHAPER, MiscStringUtils.ContainsIgnoreCase(pUnique.Influences, "Shaper"));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.SYNTHESISED, pUnique.IsSynthesised);
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.TRIGGERS_SKILL, UniqueTagsParser.IsTriggersSkill(pUnique));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.UPGRADEABLE, UniqueTagsParser.IsUpgradeable(pUnique));
+            MiscListUtils.ConditionalAddToList(qualities, QualitiesEnum.Qualities.VEILED, pUnique.IsVeiled);
 
             return qualities;
         }
 
+        /// <summary>
+        /// Gets all of the generic drop sources for the item.
+        /// </summary>
+        /// <param name="pUnique"></param>
+        /// <returns></returns>
         private static List<DropSourcesEnum.DropSources> GetDropSources(PoeWikiUnique pUnique)
         {
             List<DropSourcesEnum.DropSources> drops = [];
 
-            ConditionalAddToList(drops, DropSourcesEnum.DropSources.BOSS_DROP, pUnique.DropMonsters.Count > 0);
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.BOSS_DROP, UniqueTagsParser.IsBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.SPECIAL, UniqueTagsParser.IsSpecialDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.SPECIAL_DROP_AREA, UniqueTagsParser.IsSpecialAreaDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.SPECIAL_ENCOUNTER, UniqueTagsParser.IsSpecialEncounterDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.UPGRADE, UniqueTagsParser.IsUpgrade(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesEnum.DropSources.VENDOR_RECIPE, UniqueTagsParser.IsVendorRecipe(pUnique));
 
             return drops;
         }
 
-        private static void ConditionalAddToList<T>(List<T> pList, T pValue, bool pCondition)
+        /// <summary>
+        ///  Gets all of the specific drop sources for the item.
+        /// </summary>
+        /// <param name="pUnique"></param>
+        /// <returns></returns>
+        private static List<DropSourcesSpecificEnum.DropSourcesSpecific> GetDropSourcesSpecific(PoeWikiUnique pUnique)
         {
-            if (pCondition)
-            {
-                pList.Add(pValue);
-            }
+            List<DropSourcesSpecificEnum.DropSourcesSpecific> drops = [];
+
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.ABYSSAL_BOSS, UniqueTagsParser.IsAbyssalBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.ABYSSAL_TROVE, UniqueTagsParser.IsAbyssalTroveDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.ATLAS_MAP_BOSS, UniqueTagsParser.IsAtlasBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.BEACHHEAD, UniqueTagsParser.IsBeachheadDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.BLIGHTED, UniqueTagsParser.IsBlightedMapDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.BLIGHT_RAVAGED, UniqueTagsParser.IsBlightRavagedMapDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.BREACH, UniqueTagsParser.IsBreachMonsterDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.CORRUPTION, UniqueTagsParser.IsCorruptionAltarUpgrade(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.CURIO_DISPLAY, UniqueTagsParser.IsCurioDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.DELIRIUM_BOSS, UniqueTagsParser.IsDeliriumBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.DELVE_BOSS, UniqueTagsParser.IsDelveDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.DOMAIN_TIMLESS, UniqueTagsParser.IsDomainDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.EXPEDITION_BOSS, UniqueTagsParser.IsExpeditionBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.EXPEDITION_ZONE, UniqueTagsParser.IsExpeditionZoneDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.FLAWLESS_BREACHSTONE, UniqueTagsParser.IsFlawlessBreachstoneDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.HARBINGER, UniqueTagsParser.IsHarbingerItemDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.HEIST_BOSS, UniqueTagsParser.IsHeistBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.INCURSION, UniqueTagsParser.IsIncursionRoomDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.INCURION_BOSS, UniqueTagsParser.IsIncurionBossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.LABYRINTH, UniqueTagsParser.IsLabDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.LEGION_GENERAL, UniqueTagsParser.IsLegionGeneralDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.MASTERMIND, UniqueTagsParser.IsMastermindDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.RITUAL, UniqueTagsParser.IsRitualDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.SANCTUM, UniqueTagsParser.IsSanctumWithoutRelicDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.SANCTUM_WITH_RELIC, UniqueTagsParser.IsSanctumWithRelicDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.SIMULACRUM, UniqueTagsParser.IsSimulacrumDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.SMUGGLERS_CACHE, UniqueTagsParser.IsHeistCacheDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.SYNDICATE_SAFEHOUSE, UniqueTagsParser.IsSafehouseDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.TIER_17_BOSS, UniqueTagsParser.IsTier17BossDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.TRIALMASTER, UniqueTagsParser.IsTrialMasterDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.ULTIMATUM_TRIAL, UniqueTagsParser.IsUltimatumTrialDrop(pUnique));
+            MiscListUtils.ConditionalAddToList(drops, DropSourcesSpecificEnum.DropSourcesSpecific.WARBAND, UniqueTagsParser.IsWarbandsBossDrop(pUnique));
+
+            return drops;
         }
-
-
     }
 }

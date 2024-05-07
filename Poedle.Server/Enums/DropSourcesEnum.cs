@@ -5,27 +5,25 @@
         public enum DropSources
         {
             NONE,
-            BOSS_DROP
+            BOSS_DROP,
+            SPECIAL,
+            SPECIAL_DROP_AREA,
+            SPECIAL_ENCOUNTER,
+            UPGRADE,
+            VENDOR_RECIPE,
         }
 
         private readonly static Dictionary<DropSources, string> _enumToStrExceptions = new()
         {
-            { DropSources.BOSS_DROP, "Boss Drop" }
-        };
-
-        private readonly static Dictionary<string, DropSources> _strToEnumExceptions = new()
-        {
-            { "Boss Drop", DropSources.BOSS_DROP }
+            { DropSources.BOSS_DROP, "Boss Drop" },
+            { DropSources.SPECIAL_DROP_AREA, "Special Drop Area" },
+            { DropSources.SPECIAL_ENCOUNTER, "Special Encounter" },
+            { DropSources.VENDOR_RECIPE, "Vendor Recipe" }
         };
 
         public static string EnumToStr(DropSources pEnum)
         {
             return EnumUtil.GetNameByValue(pEnum, _enumToStrExceptions);
-        }
-
-        public static DropSources StrToEnum(string pEnum)
-        {
-            return EnumUtil.GetEnumByName(pEnum, _strToEnumExceptions);
         }
     }
 }
