@@ -12,7 +12,7 @@ namespace Poedle.PoeDb.Mappers
         /// <returns></returns>
         public static bool IsAbyssal(PoeWikiUnique pUnique)
         {
-            return MiscStringUtils.ContainsIgnoreCase(pUnique.StatText, "Abyssal [[Item socket|Sockets]]");
+            return MiscStringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Abyssal [[Item socket|Sockets]]") || MiscStringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Abyssal [[Item socket|Sockets]]");
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Poedle.PoeDb.Mappers
         /// <returns></returns>
         public static bool IsGrantsSkills(PoeWikiUnique pUnique)
         {
-            return MiscStringUtils.ContainsIgnoreCase(pUnique.StatText, "Grants [[Level]]");
+            return MiscStringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[Level]]") || MiscStringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Grants [[Level]]");
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Poedle.PoeDb.Mappers
         /// <returns></returns>
         public static bool IsTriggersSkill(PoeWikiUnique pUnique)
         {
-            return MiscStringUtils.ContainsIgnoreCase(pUnique.StatText, "Trigger [[Level]]");
+            return MiscStringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Trigger [[Level]]") || MiscStringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Triggers [[Level]]");
         }
 
 

@@ -6,5 +6,7 @@ namespace Poedle.PoeDb.Models
     {
         [BsonId]
         public int Id { get; set; } = 0;
+
+        public bool _MarkForReview { get; set; }
     }
 }

@@ -17,8 +17,10 @@ namespace Poedle.PoeWiki.Models
         public string DropText { get; set; } = "";
         [JsonPropertyName("release version")]
         public string ReleaseVersion { get; set; } = "";
-        [JsonPropertyName("stat text")]
-        public string StatText { get; set; } = "";
+        [JsonPropertyName("implicit stat text")]
+        public string ImplicitStatText { get; set; } = "";
+        [JsonPropertyName("explicit stat text")]
+        public string ExplicitStatText { get; set; } = "";
 
         [JsonPropertyName("required level")]
         public ushort ReqLvl { get; set; }

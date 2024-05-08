@@ -8,7 +8,8 @@ namespace Poedle.PoeDb.Models
         public string BaseItem { get; set; } = "";
         public List<LeaguesEnum.Leagues> LeaguesIntroduced { get; set; } = [];
         public List<string> FlavourText { get; set; } = [];
-        public List<string> StatText { get; set; } = [];
+        public List<string> ImplicitStatText { get; set; } = [];
+        public List<string> ExplicitStatText { get; set; } = [];
 
         public ushort ReqLvl { get; set; }
         public ushort ReqDex { get; set; }

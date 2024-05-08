@@ -28,7 +28,7 @@
             }},
             { CargoParamTypes.UNIQUES, new CargoParams() {
                 Tables = "items",
-                Fields = "_ID,name,_pageName,class,base_item,influences,flavour_text,drop_monsters,drop_text,release_version,stat_text,required_level,required_dexterity,required_intelligence,required_strength,is_corrupted,is_fractured,is_replica,is_synthesised,is_veiled,is_eater_of_worlds_item,is_searing_exarch_item",
+                Fields = "_ID,name,_pageName,class,base_item,influences,flavour_text,drop_monsters,drop_text,release_version,implicit_stat_text,explicit_stat_text,required_level,required_dexterity,required_intelligence,required_strength,is_corrupted,is_fractured,is_replica,is_synthesised,is_veiled,is_eater_of_worlds_item,is_searing_exarch_item",
                 Where = "rarity_id=\"Unique\" AND removal_version IS NULL AND _pageName NOT LIKE \"%testcase%\" AND drop_enabled=true"
             }},
             { CargoParamTypes.SKILLGEMS, new CargoParams() {

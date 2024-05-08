@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using Poedle.PoeDb.DbControllers;
+using Poedle.PoeDb.Models;
 using Poedle.PoeWiki;
 using Poedle.Utils.Logger;
 
@@ -39,5 +40,19 @@ namespace Poedle.PoeDb
             _dbReset.ResetAllUniques(League);
         }
         #endregion
+
+        public void InternalMarkForReview<T>(string pColName, Func<ILiteCollection<T>, List<T>> pLogic) where T : BaseDbModel
+        {
+            ILiteCollection<T> col = _db.GetCollection<T>(pColName);
+
+            // Set the logic for which ones to review
+            List<T> toReview = pLogic(col);
+
+            foreach (var x in toReview)
+            {
+                x._MarkForReview = true;
+                col.Update(x);
+            }
+        }
     }
 }

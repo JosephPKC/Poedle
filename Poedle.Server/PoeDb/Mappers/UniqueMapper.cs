@@ -13,9 +13,6 @@ namespace Poedle.PoeDb.Mappers
         [GeneratedRegex("^[\\w\\s]+\\(lore\\)\\|")]
         private static partial Regex LoreEmbedRegex();
 
-        [GeneratedRegex("\\[\\[[\\w\\s]+\\|")]
-        private static partial Regex KeywordAltEmbedRegex();
-
         public static DbUnique MapUnique(PoeWikiUnique pUnique, List<DbLeague> pLeagues)
         {
             DbUnique unique = new()
@@ -24,7 +21,8 @@ namespace Poedle.PoeDb.Mappers
                 BaseItem = pUnique.BaseItem,
                 FlavourText = GetCleanedFlavourText(pUnique.FlavourText),
                 LeaguesIntroduced = GetLeaguesIntroduced(pLeagues),
-                StatText = GetCleanedStatText(pUnique.StatText),
+                ImplicitStatText = GetCleanedStatText(pUnique.ImplicitStatText),
+                ExplicitStatText = GetCleanedStatText(pUnique.ExplicitStatText),
                 ReqLvl = pUnique.ReqLvl,
                 ReqDex = pUnique.ReqDex,
                 ReqInt  = pUnique.ReqInt,
@@ -62,44 +60,59 @@ namespace Poedle.PoeDb.Mappers
 
         private static List<string> GetCleanedFlavourText(string pFlavourText)
         {
-            string cleanedText = HTMLTagCleaner.ParseHTMLTags(pFlavourText);
+            string cleanedText = HTMLTagCleaner.ParseBasicHTMLTags(pFlavourText);
             // Clean up the lore embeds
             if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "(lore)|"))
             {
                 cleanedText = LoreEmbedRegex().Replace(cleanedText, "");
             }
-            // Clean up the atziri and breach blessing upgrade special texts
-            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "-help"))
-            {
-                cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText);
-            }
-            // Clean up the harbinger glyphs
-            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "class=\"glyph"))
-            {
-                cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText, "<glyph?>");
-            }
+            // Clean up <span class="tc -help">...</span>. Usually used for help text for incursion item flavour text.
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "tc -help");
+            // Clean up <span class="glyph code"></span>. For harbinger item flavour text.
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "glyph [\\w\\d]+", "<glyph?>");
 
             return StringCleaner.SeparateStringLines(cleanedText);
         }
 
         private static List<string> GetCleanedStatText(string pStatText)
         {
-            string cleanedText = pStatText;
-            // Clean up the [[word|conjugate]] formats
-            if (KeywordAltEmbedRegex().Match(cleanedText) != Match.Empty)
-            {
-                cleanedText = KeywordAltEmbedRegex().Replace(cleanedText, "");
-            }
+            // Clean up [[word1|word2].
+            string cleanedText = HTMLTagCleaner.ReplaceBracketGroupWithSecond(pStatText);
+            // Clean up <hr style="width: 20%">
+            cleanedText = cleanedText.Replace("<hr style=\"width: 20%\">", "");
             // Do generic parsing after as it is easier to find the above variants with the prefix '[['
-            cleanedText = HTMLTagCleaner.ParseHTMLTags(cleanedText);
+            cleanedText = HTMLTagCleaner.ParseBasicHTMLTags(cleanedText);
+            // Clean up <span class="item-stat-separator -unique">...</span>
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "item-stat-separator -unique", "\n");
+            // Clean up <span class="hoverbox c-tooltip"></span>
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "hoverbox__activator c-tooltip__activator", "");
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "hoverbox__display c-tooltip__display", "");
+            cleanedText = HTMLTagCleaner.ReplaceSpanClass(cleanedText, "hoverbox c-tooltip", "");
+            // Clean up <span class="tc -default">...</span> and "tc -value", which is used to set a font for certain text.
+            cleanedText = HTMLTagCleaner.ReplaceSpanClassWithInnerText(cleanedText, "tc -default");
+            cleanedText = HTMLTagCleaner.ReplaceSpanClassWithInnerText(cleanedText, "tc -value");
+            // Clean up <span class="tc -corrupted">...</span>. Usually for the Forbidden jewels.
+            cleanedText = HTMLTagCleaner.ReplaceSpanClassWithInnerText(cleanedText, "tc -corrupted");
+            // Clean up <table class="...">...</table> with its header inner text. Usually, for the mod lines that can have multiple options.
+            // Clean up multi mod lines (i.e. Aul's Uprising has a line that can be one of many different mods).
+            cleanedText = HTMLTagCleaner.ReplaceTableClassWithHeader(cleanedText);
+            // Clean up <span class="veiled -suffix"></span>. For veiled mods.
+            cleanedText = HTMLTagCleaner.ReplaceSpanClassWithInnerText(cleanedText, "veiled -prefix");
+            cleanedText = HTMLTagCleaner.ReplaceSpanClassWithInnerText(cleanedText, "veiled -suffix");
+            // Clean up <abbr title="...">...</abbr> tags
+            cleanedText = HTMLTagCleaner.ReplaceAbbrWithInnerText(cleanedText);
+            // Clean up <veiled mod pool> and other similar meta tag lines.
+            cleanedText = cleanedText.Replace("<veiled mod pool>", "");
+            cleanedText = cleanedText.Replace("<two random mods of devotion>", "");
+            // Clean up double bracket tags <<...>>
+            cleanedText = HTMLTagCleaner.ParseDoubleBracketTags(cleanedText);
+            // Clean up unecessary endlines found primarily in Precursor's Emblems
+            cleanedText = cleanedText.Replace("\nor\n", "or");
 
-            // Clean up the unique mod line
-            if (MiscStringUtils.ContainsIgnoreCase(cleanedText, "-unique"))
-            {
-                cleanedText = HTMLTagCleaner.ReplaceSpanClassTags(cleanedText, "\n");
-            }
-
-            return StringCleaner.SeparateStringLines(cleanedText);
+            // Split the text into individual lines.
+            List<string> cleanedTextLines = StringCleaner.SeparateStringLines(cleanedText);
+            // Remove (Hidden) mod lines.
+            return cleanedTextLines.FindAll(x => !x.Contains("(Hidden)"));
         }
 
         /// <summary>
