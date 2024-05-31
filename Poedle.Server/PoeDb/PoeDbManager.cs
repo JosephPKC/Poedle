@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using Poedle.Enums;
 using Poedle.PoeDb.DbControllers;
 using Poedle.PoeDb.Models;
 using Poedle.PoeWiki;
@@ -13,18 +14,20 @@ namespace Poedle.PoeDb
         private readonly DebugLogger _log;
 
         #region "Controllers"
-        private readonly DbResetter _dbReset;
-        public DbLeagueGetter League { get; private set; } 
-        public DbUniqueGetter Unique { get; private set; }
+        public DbScoreController Score { get; private set; }
+        public DbLeagueController League { get; private set; } 
+        public DbUniqueController Unique { get; private set; }
         #endregion
+
+        private readonly Dictionary<string, List<LeaguesEnum.Leagues>> _versionLeagueCache = [];
 
         public PoeDbManager(string pDbPath, DebugLogger pLogger)
         {
             _db = new LiteDatabase(pDbPath);
             _api = new PoeWikiApi(pLogger);
             _log = pLogger;
-            _dbReset = new DbResetter(_db, _api, _log);
 
+            Score = new(_db, _log);
             League = new(_db, _log);
             Unique = new(_db, _log);
         }
@@ -35,9 +38,36 @@ namespace Poedle.PoeDb
             // Flush the api cache to clean out old info.
             _api.FlushCache();
             // Collections that do not require other collections go first.
-            _dbReset.ResetAllLeagues();
+            League.ResetAll(_api);
+            CacheLeagues();
             // Collections that require other collections go last.
-            _dbReset.ResetAllUniques(League);
+            Unique.ResetAll(_api, _versionLeagueCache);
+        }
+
+        /// <summary>
+        /// Reset meta data, that is meant to be persistant.
+        /// Includes scores, guesses, and other data.
+        /// </summary>
+        public void ResetMetaData()
+        {
+            Score.ResetAll();
+        }
+
+        private void CacheLeagues()
+        {
+            List<DbLeague> allLeagues = League.GetAll();
+            foreach (DbLeague league in allLeagues)
+            {
+                string majorMinor = $"{league.ReleaseVersionMajor}.{league.ReleaseVersionMinor}";
+
+                if (!_versionLeagueCache.TryGetValue(majorMinor, out List<LeaguesEnum.Leagues>? value))
+                {
+                    value = ([]);
+                    _versionLeagueCache.Add(majorMinor, value);
+                }
+
+                value.Add(EnumUtil.GetEnumByName<LeaguesEnum.Leagues>(league.Name));
+            }
         }
         #endregion
 

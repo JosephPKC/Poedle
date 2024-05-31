@@ -5,8 +5,9 @@ namespace Poedle.Game.Mappers
 {
     public static class UniqueParamsMapper
     {
-        public static UniqueParams GetParams(DbUnique pUnique)
+        public static UniqueParams GetParams(DbUnique? pUnique)
         {
+            if (pUnique == null) return new();
             return new()
             {
                 ItemClass = pUnique.ItemClass,

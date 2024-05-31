@@ -13,14 +13,14 @@ namespace Poedle.PoeDb.Mappers
         [GeneratedRegex("^[\\w\\s]+\\(lore\\)\\|")]
         private static partial Regex LoreEmbedRegex();
 
-        public static DbUnique MapUnique(PoeWikiUnique pUnique, List<DbLeague> pLeagues)
+        public static DbUnique MapUnique(PoeWikiUnique pUnique, List<LeaguesEnum.Leagues> pLeagues)
         {
             DbUnique unique = new()
             {
                 ItemClass = GetItemClass(pUnique.ItemClass),
                 BaseItem = pUnique.BaseItem,
                 FlavourText = GetCleanedFlavourText(pUnique.FlavourText),
-                LeaguesIntroduced = GetLeaguesIntroduced(pLeagues),
+                LeaguesIntroduced = pLeagues.Count > 0 ? pLeagues : [LeaguesEnum.Leagues.BASE_GAME],
                 ImplicitStatText = GetCleanedStatText(pUnique.ImplicitStatText),
                 ExplicitStatText = GetCleanedStatText(pUnique.ExplicitStatText),
                 ReqLvl = pUnique.ReqLvl,
@@ -45,17 +45,6 @@ namespace Poedle.PoeDb.Mappers
             }
 
             return ItemClassesEnum.StrToEnum(pItemClass);
-        }
-
-        private static List<LeaguesEnum.Leagues> GetLeaguesIntroduced(List<DbLeague> pLeagues)
-        {
-            if (pLeagues == null || pLeagues.Count == 0)
-            {
-                // Base Game
-                return [LeaguesEnum.Leagues.BASE_GAME];
-            }
-
-            return pLeagues.Select(x => LeaguesEnum.StrToEnum(x.Name)).ToList();
         }
 
         private static List<string> GetCleanedFlavourText(string pFlavourText)

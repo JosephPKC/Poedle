@@ -5,6 +5,7 @@
         public enum DbColTypes
         {
             NONE,
+            SCORES,
             LEAGUES,
             UNIQUES,
             SKILLGEMS,
@@ -18,6 +19,9 @@
 
         public static readonly Dictionary<DbColTypes, DbParams> DbParamsMap = new()
         {
+            { DbColTypes.SCORES, new DbParams() {
+                ColName = "scores"
+            }},
             { DbColTypes.LEAGUES, new DbParams() {
                 ColName = "leagues"
             }},
@@ -31,5 +35,10 @@
                 ColName = "passives"
             }}
         };
+
+        public static string GetColName(DbColTypes pType)
+        {
+            return DbParamsMap[pType].ColName;
+        }
     }
 }

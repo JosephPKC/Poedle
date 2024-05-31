@@ -1,10 +1,11 @@
 ﻿using LiteDB;
-using Poedle.Game.Controllers.Uniques;
 using Poedle.Game.Mappers;
+using Poedle.Game.Models.GuessResults;
 using Poedle.Game.Models.Params;
 using Poedle.PoeDb;
 using Poedle.PoeDb.Models;
 using Poedle.PoeWiki;
+using Poedle.Game.Controllers;
 using Poedle.Utils.Logger;
 using Poedle.Utils.Logger.Writer;
 using Poedle.Utils.Strings;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
+using Poedle.Game.Utils;
 
 namespace Poedle
 {
@@ -36,7 +38,7 @@ namespace Poedle
             // Set db
             PoeDbManager db = new("..\\..\\..\\..\\Poedle.Server\\PoeDb\\PoeDb.db", log);
 
-            FindUniqueByParamGameController game = new(db, log);
+            FindUniqueByParamController game = new(db, log);
 
 
             while (true)
@@ -102,7 +104,7 @@ namespace Poedle
             {
                 Console.WriteLine();
                 Console.WriteLine("---------------------------------");
-                game.StartNewGame();
+                game.PrepGame();
 
                 while (true)
                 {
@@ -122,14 +124,23 @@ namespace Poedle
                         continue;
                     }
 
-                    FindUniqueByParamGameController.GuessResult? result;
+                    GuessUniqueByParamGuessResult? result;
                     if (int.TryParse(guess, out int guessInt))
                     {
-                         result = game.MakeGuess(guessInt);
+                         result = (GuessUniqueByParamGuessResult)game.MakeGuess(guessInt);
                     }
                     else
                     {
-                        result = game.MakeGuess(guess);
+
+                        int? g = game.GetGuessId(guess);
+                        if (g == null)
+                        {
+                            result = null;
+                        }
+                        else
+                        {
+                            result = (GuessUniqueByParamGuessResult)game.MakeGuess(g.Value);
+                        }
                     }
 
                     // Check if guess is valid
@@ -139,17 +150,17 @@ namespace Poedle
                         continue;
                     }
 
-                    if (result.Value.IsCorrect)
+                    if (result.IsCorrect)
                     {
                         // Correct - You Win
-                        Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result, game.AreHintsEnabled));
+                        Console.WriteLine(ParamsStringBuilder.BuildResultString(result.Params, result.Result, true));
                         Console.WriteLine($"{guess} was correct! Congrats and thanks for playing!");
                         break;
                     }
 
                     // Wrong - Try Again
                     // Add to guessed list
-                    Console.WriteLine(FindUniqueByParamGameController.BuildResultString(result.Value.Params, result.Value.Result, game.AreHintsEnabled));
+                    Console.WriteLine(ParamsStringBuilder.BuildResultString(result.Params, result.Result, true));
                     Console.WriteLine();
                 }
 

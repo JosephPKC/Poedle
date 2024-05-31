@@ -4,7 +4,7 @@ using static Poedle.Enums.MiscEnums;
 
 namespace Poedle.Game.Models.Params
 {
-    public class UniqueParams
+    public class UniqueParams : BaseParams
     {
         public ItemClassesEnum.ItemClasses ItemClass { get; set; } = ItemClassesEnum.ItemClasses.NONE;
         public string BaseItem { get; set; } = "";
@@ -19,17 +19,17 @@ namespace Poedle.Game.Models.Params
         public uint ReqStr { get; set; }
     }
 
-    public class UniqueParamsResult
+    public class UniqueParamsResult : BaseParamsResult
     {
-        public ParamsResult BaseItem { get; set; }
-        public ParamsResult LeaguesIntroduced { get; set; }
-        public ParamsResult Qualities { get; set; }
-        public ParamsResult DropSources { get; set; }
-        public ParamsResult DropSourcesSpecific { get; set; }
-        public ParamsResult ReqLvl { get; set; }
-        public ParamsResult ReqDex { get; set; }
-        public ParamsResult ReqInt { get; set; }
-        public ParamsResult ReqStr { get; set; }
+        public ParamsResult BaseItem { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult LeaguesIntroduced { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult Qualities { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult DropSources { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult DropSourcesSpecific { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult ReqLvl { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult ReqDex { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult ReqInt { get; set; } = ParamsResult.CORRECT;
+        public ParamsResult ReqStr { get; set; } = ParamsResult.CORRECT;
 
     }
 }

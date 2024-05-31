@@ -15,7 +15,15 @@ namespace Poedle.PoeDb
         {
             get
             {
-                return $"{Major}.{Minor}.{Patch}";
+                return $"{MajorMinorText}.{Patch}";
+            }
+        }
+
+        public string MajorMinorText
+        {
+            get
+            {
+                return $"{Major}.{Minor}";
             }
         }
 
