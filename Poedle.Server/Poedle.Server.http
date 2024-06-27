@@ -1,4 +1,4 @@
-@Poedle.Server_HostAddress = http://localhost:5188
+@Poedle.Server_HostAddress = http://localhost:5236
 
 GET {{Poedle.Server_HostAddress}}/weatherforecast/
 Accept: application/json
