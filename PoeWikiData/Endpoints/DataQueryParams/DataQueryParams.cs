@@ -1,6 +1,6 @@
 ﻿namespace PoeWikiData.Endpoints.DbQueryParams
 {
-    internal static class DbQueryParams
+    internal static class DataQueryParams
     {
         public enum DbTypes
         {

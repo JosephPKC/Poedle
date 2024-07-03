@@ -5,7 +5,7 @@ using PoeWikiApi.Utils;
 
 namespace PoeWikiApi.Endpoints
 {
-    public abstract class BaseEndpoint(HttpRetriever pHttp, CacheHandler<string, string> pCache, ConsoleLogger pLogger)
+    public abstract class BaseWikiEndpoint(HttpRetriever pHttp, CacheHandler<string, string> pCache, ConsoleLogger pLogger)
     {
         private static readonly string _uriBase = @"https://www.poewiki.net/w/index.php";
         protected static readonly string _cargoTitle = "Special:CargoExport";

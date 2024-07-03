@@ -1,6 +1,6 @@
 ﻿namespace PoeWikiData.Models
 {
-    public class LeagueModel : BaseModel
+    public class LeagueDataModel : BaseDataModel
     {
         public string ReleaseVersionMajor { get; set; } = "";
         public string ReleaseVersionMinor { get; set; } = "";

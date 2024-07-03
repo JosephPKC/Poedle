@@ -12,7 +12,8 @@ namespace PoeWikiApi
         private readonly ConsoleLogger _log;
 
         #region "Endpoints"
-        public UniqueItemEndpoint Uniques { get; private set; }
+        public LeagueWikiEndpoint Leagues { get; private set; }
+        public UniqueItemWikiEndpoint UniqueItems { get; private set; }
         #endregion
 
         public PoeWikiManager(ConsoleLogger pLogger)
@@ -21,7 +22,8 @@ namespace PoeWikiApi
             _cache = new(_cacheSizeLimit);
             _log = pLogger;
 
-            Uniques = new(_http, _cache, _log);
+            Leagues = new(_http, _cache, _log);
+            UniqueItems = new(_http, _cache, _log);
         }
 
         public void FlushCache()

@@ -2,7 +2,7 @@
 
 namespace PoeWikiData.Models
 {
-    public class UniqueItemModel : BaseModel
+    public class UniqueItemDataModel : BaseDataModel
     {
         // Primary fields
         public ItemClasses ItemClass { get; set; } = ItemClasses.None;

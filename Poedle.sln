@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoeWikiApi", "PoeWikiApi\Po
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseToolsUtils", "BaseToolsUtils\BaseToolsUtils.csproj", "{CC682650-92E6-4C2C-813A-ADCEF3C98CB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTester", "ConsoleTester\ConsoleTester.csproj", "{3760CF98-95D3-46F3-A9BE-B5C6CF4047D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoeDbUpdate", "PoeDbUpdate\PoeDbUpdate.csproj", "{A6A630DD-11EA-4B86-AA81-56F2763A819F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +43,10 @@ Global
 		{CC682650-92E6-4C2C-813A-ADCEF3C98CB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC682650-92E6-4C2C-813A-ADCEF3C98CB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC682650-92E6-4C2C-813A-ADCEF3C98CB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3760CF98-95D3-46F3-A9BE-B5C6CF4047D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3760CF98-95D3-46F3-A9BE-B5C6CF4047D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3760CF98-95D3-46F3-A9BE-B5C6CF4047D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3760CF98-95D3-46F3-A9BE-B5C6CF4047D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6A630DD-11EA-4B86-AA81-56F2763A819F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6A630DD-11EA-4B86-AA81-56F2763A819F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6A630DD-11EA-4B86-AA81-56F2763A819F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6A630DD-11EA-4B86-AA81-56F2763A819F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 ﻿namespace PoeWikiApi.Endpoints.CargoQueryParams
 {
-    internal static class CargoQueryParams
+    internal static class WikiQueryParams
     {
         public enum CargoTypes
         {

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace PoeWikiApi.Models
 {
-    public class UniqueItemModel : BaseModel
+    public class UniqueItemWikiModel : BaseWikiModel
     {
         [JsonPropertyName("class")]
         public string ItemClass { get; set; } = "";

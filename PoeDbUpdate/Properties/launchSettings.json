@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PoeDbUpdate": {
+      "commandName": "Project",
+      "commandLineArgs": "U"
+    }
+  }
+}

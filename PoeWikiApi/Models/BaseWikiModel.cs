@@ -2,7 +2,7 @@
 
 namespace PoeWikiApi.Models
 {
-    public abstract class BaseModel
+    public abstract class BaseWikiModel
     {
         [JsonPropertyName("_ID")]
         public uint Id { get; set; }
