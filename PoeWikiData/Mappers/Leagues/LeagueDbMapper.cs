@@ -1,21 +1,28 @@
 ﻿using PoeWikiApi.Models;
-using PoeWikiData.Utils;
+using PoeWikiData.Models.Leagues;
+using System.Data.SQLite;
 
-namespace PoeWikiData.Mappers.SQLiteMappers
+namespace PoeWikiData.Mappers.Leagues
 {
-    internal static class LeagueSQLiteMapper
+    internal static class LeagueDbMapper
     {
-        public static List<string> Map(LeagueWikiModel pModel)
+        public static LeagueDbModel Map(LeagueWikiModel pModel)
         {
             (string, string, string) releaseVersionSplit = GetSplitVersion(pModel.ReleaseVersion);
-            return 
-            [
-                SQLiteHelper.SQLiteString(null),
-                SQLiteHelper.SQLiteString(GetCleanedName(pModel.Name)),
-                SQLiteHelper.SQLiteString(releaseVersionSplit.Item1),
-                SQLiteHelper.SQLiteString(releaseVersionSplit.Item2),
-                SQLiteHelper.SQLiteString(releaseVersionSplit.Item3),
-            ];
+            return new()
+            {
+                Id = pModel.Id,
+                Name = GetCleanedName(pModel.Name),
+                ReleaseVersionMajor = releaseVersionSplit.Item1,
+                ReleaseVersionMinor = releaseVersionSplit.Item2,
+                ReleaseVersionPatch = releaseVersionSplit.Item3,
+            };
+        }
+
+        public static LeagueDbModelList Read(SQLiteDataReader pReader)
+        {
+            List<LeagueDbModel> models = [];
+            return new(models);
         }
 
         private static string GetCleanedName(string pName)

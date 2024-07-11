@@ -24,13 +24,13 @@ namespace PoeWikiApi.Models
         public string ExplicitStatText { get; set; } = "";
 
         [JsonPropertyName("required level")]
-        public ushort ReqLvl { get; set; }
+        public uint ReqLvl { get; set; }
         [JsonPropertyName("required dexterity")]
-        public ushort ReqDex { get; set; }
+        public uint ReqDex { get; set; }
         [JsonPropertyName("required intelligence")]
-        public ushort ReqInt { get; set; }
+        public uint ReqInt { get; set; }
         [JsonPropertyName("required strength")]
-        public ushort ReqStr { get; set; }
+        public uint ReqStr { get; set; }
 
         [JsonPropertyName("is corrupted")]
         public bool IsCorrupted { get; set; }

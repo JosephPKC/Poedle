@@ -59,7 +59,7 @@ namespace PoeWikiApi.Utils
                 Converters =
                 {
                     new BoolJsonConverter(),
-                    new UShortJsonConverter(),
+                    new uintJsonConverter(),
                     new StringJsonConverter(),
                     new StringListJsonConverter()
                 }
@@ -96,11 +96,11 @@ namespace PoeWikiApi.Utils
         }
     }
 
-    public class UShortJsonConverter : JsonConverter<ushort>
+    public class uintJsonConverter : JsonConverter<uint>
     {
         public override bool HandleNull => true;
 
-        public override ushort Read(ref Utf8JsonReader pReader, Type pTypeToConvert, JsonSerializerOptions pOptions)
+        public override uint Read(ref Utf8JsonReader pReader, Type pTypeToConvert, JsonSerializerOptions pOptions)
         {
             if (pReader.TokenType == JsonTokenType.Null)
             {
@@ -109,7 +109,7 @@ namespace PoeWikiApi.Utils
             return pReader.GetUInt16();
         }
 
-        public override void Write(Utf8JsonWriter pWriter, ushort pValue, JsonSerializerOptions pOptions)
+        public override void Write(Utf8JsonWriter pWriter, uint pValue, JsonSerializerOptions pOptions)
         {
             throw new NotImplementedException();
         }

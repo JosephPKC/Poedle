@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace PoeWikiApi.Utils
+namespace BaseToolsUtils.Caching
 {
     public class CacheHandler<K, V> : IDisposable
     {

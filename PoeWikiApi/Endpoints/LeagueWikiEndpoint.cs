@@ -1,4 +1,5 @@
-﻿using BaseToolsUtils.Logging;
+﻿using BaseToolsUtils.Caching;
+using BaseToolsUtils.Logging;
 using PoeWikiApi.Models;
 using PoeWikiApi.Utils;
 using static PoeWikiApi.Endpoints.CargoQueryParams.WikiQueryParams;

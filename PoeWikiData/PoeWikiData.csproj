@@ -16,8 +16,4 @@
     <ProjectReference Include="..\PoeWikiApi\PoeWikiApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappers\DataModelMappers\" />
-  </ItemGroup>
-
 </Project>

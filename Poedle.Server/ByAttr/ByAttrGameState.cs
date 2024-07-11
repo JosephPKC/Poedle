@@ -21,7 +21,7 @@ namespace Poedle.Server.ByAttr
     public class  AttributeState
     {
         // Primary fields
-        public ushort Id { get; set; } = 0;
+        public uint Id { get; set; } = 0;
         public string Name { get; set; } = "";
         public string ItemClass { get; set; } = "";
         public string BaseItem { get; set; } = "";

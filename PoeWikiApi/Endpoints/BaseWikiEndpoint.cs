@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-
+using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi.Utils;
 

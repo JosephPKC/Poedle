@@ -117,7 +117,7 @@ namespace Poedle.Server.ByAttr
         //    return guess.Intersect(actual).Any() ? ResultStates.PARTIAL : ResultStates.WRONG;
         //}
 
-        //private ResultStates compareNumbers(ushort guess, ushort actual)
+        //private ResultStates compareNumbers(uint guess, uint actual)
         //{
         //    if (guess == actual) return ResultStates.CORRECT;
 

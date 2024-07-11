@@ -1,8 +1,8 @@
 ﻿namespace PoeWikiData.Models
 {
-    public abstract class BaseDataModel
+    public abstract class BaseDbModel : BaseModel
     {
-        public ushort Id { get; set; } = 0;
+        public uint Id { get; set; } = 0;
         public string Name { get; set; } = "";
     }
 }

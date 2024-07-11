@@ -1,317 +1,89 @@
-﻿using System.Data;
-using System.Data.SQLite;
-using System.Diagnostics;
-
+﻿using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi;
-using PoeWikiApi.Models;
-using PoeWikiData.Endpoints;
-using PoeWikiData.Mappers.SQLiteMappers;
+using PoeWikiData.Endpoints.Leagues;
+using PoeWikiData.Endpoints.StaticData;
+using PoeWikiData.Endpoints.UniqueItems;
 using PoeWikiData.Models;
-using PoeWikiData.Models.Enums;
 using PoeWikiData.Utils;
 
 namespace PoeWikiData
 {
-    public sealed class PoeDbManager(string pDbFilePath, bool pIsNewDb, ConsoleLogger pLogger)
+    /*  UPDATE flow
+     *  Drop table
+     *  Create table
+     *  Get from API
+     *  Transform API model into workable db model
+     *  Transform db model into a list of strings and insert into table
+     *  UpdateAll
+     *      UpdateLeagues
+     *      UpdateUniqueItems
+     *      UpdateLinks
+     *  RESET flow
+     *  Drop table
+     *  Create table
+     *  Set defaults
+     */
+
+    /*  SELECT flow
+     *  Select from table
+     *  Transform reader data into a db model and return that
+     */
+
+    /*  Separation
+     *  SQLiteDbWrapper - Wraps the db and allows for Select, Create, Drop, and Insert.
+     *  Endpoints - Takes in the wrapper to do specific table modification for Updates, Resets, and Select
+     *  Models - Db models for return. It should match the table(s)/view it is emulating exactly as much as possible
+     *  Mappers - Transforms wiki api data into proper db models
+     *  SQLiteMappers - Transforms db models into a list of strings for insertion
+     *  Schemas - Reference data to use when doing queries, specifically for the Update. It is so we can store all of the schema structure and info in one place instead of it being scattered and repeated all over
+     */
+    public sealed class PoeDbManager
     {
-        private readonly SQLiteConnection _sqlite = new($"Data Source={pDbFilePath};New={pIsNewDb};");
-        private readonly PoeDbCache _cache = new();
-        private readonly ConsoleLogger _log = pLogger;
-        private readonly PoeWikiManager _api = new(pLogger);
+        private readonly PoeDbHandler _db;
+        private readonly ConsoleLogger _log;
+        private readonly CacheHandler<string, BaseModel> _cache;
+        private readonly PoeWikiManager _api;
 
-        // Base Generics
-        private void ExecuteNonQuery(string pQuery)
+        private readonly StaticDataDbEndpointGroup _staticData;
+        private readonly LeagueDbEndpointGroup _league;
+        private readonly UniqueItemDbEndpointGroup _uniqueItem;
+
+        public PoeDbManager(string pDbFilePath, bool pIsNewDb, ConsoleLogger pLogger)
         {
-            if (string.IsNullOrWhiteSpace(pQuery))
-            {
-                throw new ArgumentNullException(nameof(pQuery));
-            }
+            _cache = new();
+            _api = new(pLogger);
+            _log = pLogger;
 
-            Stopwatch timer = new();
-            _log.TimeStartLog(timer, $"BEGIN: {pQuery}");
-
-            SQLiteCommand command = _sqlite.CreateCommand();
-            command.CommandText = pQuery;
-
-            _sqlite.Open();
-            command.ExecuteNonQuery();
-            _sqlite.Close();
-
-            _log.TimeStopLogAndAppend(timer, $"END: {pQuery}");
+            _db = new(pDbFilePath, pIsNewDb, _cache, pLogger);
+            _staticData = new(_db, _cache, pLogger);
+            _league = new(_db, _cache, pLogger);
+            _uniqueItem = new(_db, _cache, pLogger);
         }
 
-        private List<T> ExecuteQuery<T>(string pQuery, Func<SQLiteDataReader, List<T>> pCreateModel)
-        {
-            if (string.IsNullOrWhiteSpace(pQuery))
-            {
-                throw new ArgumentNullException(nameof(pQuery));
-            }
-
-            Stopwatch timer = new();
-            _log.TimeStartLog(timer, $"BEGIN: {pQuery}");
-
-            SQLiteCommand command = _sqlite.CreateCommand();
-            command.CommandText = pQuery;
-
-            _sqlite.Open();
-            SQLiteDataReader reader = command.ExecuteReader();
-            List<T> modelList = pCreateModel(reader);
-            _sqlite.Close();
-
-            _log.TimeStopLogAndAppend(timer, $"END: {pQuery}");
-
-            return modelList;
-        }
-
-        // Generic Queries
-        private void Create(string pTableName, List<string> pColumns)
-        {
-            if (string.IsNullOrWhiteSpace(pTableName))
-            {
-                throw new ArgumentNullException(nameof(pColumns));
-            }
-
-            if (string.IsNullOrWhiteSpace(pTableName))
-            {
-                throw new ArgumentNullException(nameof(pColumns));
-            }
-
-            string query = $"CREATE TABLE {pTableName}({string.Join(",", pColumns)});";
-            ExecuteNonQuery(query);
-        }
-
-        private void Drop(string pTableName)
-        {
-            if (string.IsNullOrWhiteSpace(pTableName))
-            {
-                throw new ArgumentNullException(nameof(pTableName));
-            }
-
-            string query = $"DROP TABLE {pTableName};";
-            ExecuteNonQuery(query);
-        }
-
-        private void DropIfAble(string pTableName)
-        {
-            try
-            {
-                Drop(pTableName);
-            }
-            catch (SQLiteException ex)
-            {
-                _log.Log($"Could not drop table {pTableName}: {ex.Message}");
-                _sqlite.Close();
-            }
-        }
-
-        private void InsertInto(string pTableName, List<string>? pSpecifiedColumns, List<string> pValues)
-        {
-            if (pValues == null || pValues.Count == 0)
-            {
-                throw new ArgumentNullException(nameof(pValues));
-            }
-
-            string table = $"{pTableName}";
-            if (pSpecifiedColumns != null && pSpecifiedColumns.Count > 0)
-            {
-                table += $" ({string.Join(",", pSpecifiedColumns)})";
-            }
-
-            string query = $"INSERT INTO {table} VALUES ({string.Join(",", pValues)});";
-            ExecuteNonQuery(query);
-        }
-
-        private void InsertAll<T>(string pTableName, List<string>? pSpecifiedColumns, Func<PoeWikiManager, List<T>> pFromApi, Func<T, List<string>> pToStrings, Action<T>? pPostProcess) where T: BaseWikiModel
-        {
-            List<T> fromApi = pFromApi(_api);
-            foreach (T wikiModel in fromApi)
-            {
-                List<string> dataStrings = pToStrings(wikiModel);
-                InsertInto(pTableName, pSpecifiedColumns, dataStrings);
-                pPostProcess?.Invoke(wikiModel);
-            }
-        }
-
-        private Dictionary<string, string> SelectStaticData(string pTableName, bool pIsReversed)
-        {
-            Func<SQLiteDataReader, List<KeyValuePair<string, string>>> createModel = (SQLiteDataReader pReader) =>
-            {
-                List<KeyValuePair<string, string>> result = [];
-                while (pReader.Read())
-                {
-                    string itemClassId = pReader.GetInt16(0).ToString();
-                    string name = pReader.GetString(1);
-
-                    KeyValuePair<string, string> data = new(itemClassId, name);
-                    result.Add(data);
-                }
-
-                return result;
-            };
-
-            List<KeyValuePair<string, string>> result = Select(pTableName, null, null, null, null, null, false, createModel);
-            Func<KeyValuePair<string, string>, string> ToDictKey = (KeyValuePair<string, string> kv) =>
-            {
-                return pIsReversed ? kv.Value : kv.Key;
-            };
-            Func<KeyValuePair<string, string>, string> ToDictVal = (KeyValuePair<string, string> kv) =>
-            {
-                return pIsReversed ? kv.Key : kv.Value;
-            };
-            return result.ToDictionary(ToDictKey, ToDictVal);
-        }
-
-        private List<T> Select<T>(string pTableName, string? pFields, string? pWhere, string? pGroupBy, string? pOrderBy, ushort? pTop, bool pIsDistinct, Func<SQLiteDataReader, List<T>> pCreateModel)
-        {
-            if (string.IsNullOrWhiteSpace(pTableName))
-            {
-                throw new ArgumentNullException(nameof(pTableName));
-            }
-
-            string fields = string.IsNullOrWhiteSpace(pFields) ? "*" : pFields;
-            if (pTop != null && pTop > 0)
-            {
-                fields = $"TOP {pTop} {fields}";
-            }
-            if (pIsDistinct)
-            {
-                fields = $"DISTINCT {fields}";
-            }
-
-            string conditions = "";
-            if (!string.IsNullOrWhiteSpace(pWhere))
-            {
-                conditions += $" WHERE {pWhere}";
-            }
-            if (!string.IsNullOrWhiteSpace(pGroupBy))
-            {
-                conditions += $" GROUP BY {pGroupBy}";
-            }
-            if (!string.IsNullOrWhiteSpace(pOrderBy))
-            {
-                conditions += $" ORDER BY {pOrderBy}";
-            }
-
-            string query = $"SELECT {fields} FROM {pTableName}{conditions}";
-            return ExecuteQuery(query, pCreateModel);
-        }
-
-        // Segments for Update/Select
-        private void UpdateLeagues()
-        {
-            Stopwatch timer = new();
-            _log.TimeStartLog(timer, "BEGIN: UPDATE LEAGUES");
-
-            // Schema values
-            string tableName = "Leagues";
-            List<string> columns =
-            [
-                "LeagueId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-                "Name TEXT COLLATE NOCASE NOT NULL",
-                "ReleaseVersionMajor INTEGER NOT NULL",
-                "ReleaseVersionMinor INTEGER NOT NULL",
-                "ReleaseVersionPatch INTEGER NOT NULL",
-            ];
-
-            DropIfAble(tableName);
-            Create(tableName, columns);
-
-            static List<LeagueWikiModel> fromApi(PoeWikiManager api) => api.Leagues.GetAll();
-            static List<string> toStrings(LeagueWikiModel model) => LeagueSQLiteMapper.Map(model);
-            InsertAll(tableName, null, fromApi, toStrings, null);
-
-            _log.TimeStopLogAndAppend(timer, "END: UPDATE LEAGUES");
-        }
-
-        private void UpdateUniqueItems()
-        {
-            Stopwatch timer = new();
-            _log.TimeStartLog(timer, "BEGIN: UPDATE UNIQUE ITEMS");
-
-            // Schema values
-            string tableName = "UniqueItems";
-            List<string> columnms =
-            [
-                "UniqueItemId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-                "Name TEXT COLLATE NOCASE NOT NULL",
-                "ItemClassId INTEGER REFERENCES ItemClasses (ItemClassId) ON DELETE CASCADE ON UPDATE CASCADE",
-                "BaseItem TEXT COLLATE NOCASE NOT NULL",
-                "ReqLvl INTEGER NOT NULL",
-                "ReqDex INTEGER NOT NULL",
-                "ReqInt INTEGER NOT NULL",
-                "ReqStr INTEGER NOT NULL",
-            ];
-
-            DropIfAble(tableName);
-            Create(tableName, columnms);
-
-            static List<UniqueItemWikiModel> fromApi(PoeWikiManager api) => api.UniqueItems.GetAll();
-            List<string> toStrings(UniqueItemWikiModel model) => UniqueItemsSQLiteMapper.Map(model, GetUniqueItemItemClasses());
-            InsertAll(tableName, null, fromApi, toStrings, UpdateUniqueItemLinks);
-
-            _log.TimeStopLogAndAppend(timer, "END: UPDATE UNIQUE ITEMS");
-        }
-
-        private void UpdateUniqueItemLinks(UniqueItemWikiModel pModel)
-        {
-            List<string> DropSources = []; // We need the mapper to get this
-            UpdateTableLinks(pModel.Id.ToString(), DropSources, "UniqueItems_DropSources", GetUniqueItemDropSourcesR());
-        }
-
-        private void UpdateTableLinks(string pModelId, List<string> pLinkTexts, string pLinkTableName, Dictionary<string, string> pLinkIds)
-        {
-            foreach (string link in pLinkTexts)
-            {
-                UpdateTableLink(pModelId, link, pLinkTableName, pLinkIds);
-            }
-        }
-
-        private void UpdateTableLink(string pModelId, string pLinkText, string pLinkTableName, Dictionary<string, string> pLinkIds)
-        {
-            if (!pLinkIds.TryGetValue(pLinkText, out string? value))
-            {
-                return;
-            }
-
-            List<string> values =
-            [
-                pModelId,
-                value
-            ];
-
-            InsertInto(pLinkTableName, null, values);
-        }
-
-        private Dictionary<string, string> GetUniqueItemItemClasses()
-        {
-            if (_cache.UniqueItemItemClassesR == null)
-            {
-                _cache.UniqueItemItemClassesR = SelectStaticData("ItemClasses", true);
-            }
-            return _cache.UniqueItemItemClassesR;
-        }
-
-        private Dictionary<string, string> GetUniqueItemDropSources()
-        {
-            return _cache.UniqueItemDropSources;
-        }
-
-        private Dictionary<string, string> GetUniqueItemDropSourcesR()
-        {
-            return _cache.UniqueItemDropSourcesR;
-        }
-
-        // Public API
         public void UpdateData()
         {
-            UpdateLeagues();
-            UpdateUniqueItems();
+            // Update static data.
+            // Can use reflection on enums to get id and name to update the static data tables
+
+            _league.Update.Update(_api);
+
+            ReferenceDataModelGroup refData = new()
+            {
+                DropSources = _staticData.Select.SelectAllDropSources(),
+                DropTypes = _staticData.Select.SelectAllDropTypes(),
+                ItemAspects = _staticData.Select.SelectAllItemAspects(),
+                ItemClasses = _staticData.Select.SelectAllItemClasses(),
+                Leagues = _league.Select.SelectAll()
+            };
+
+            _uniqueItem.Update.Update(_api, refData);
         }
 
         public void ResetMetaData()
         {
             // Drop then Create
         }
+
     }
 }
