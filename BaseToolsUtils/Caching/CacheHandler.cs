@@ -34,11 +34,12 @@ namespace BaseToolsUtils.Caching
         {
             if (pKey == null) return;
 
+
             MemoryCacheEntryOptions memCacheOptions = new()
             {
                 Size = 1,
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(pAbsExpInSec > 0 ? pAbsExpInSec : AbsExpInSecDefault),
-                SlidingExpiration = TimeSpan.FromSeconds(pSlidingExpInSec > 0 ? pSlidingExpInSec : SlidingExpInSecDefault)
+                AbsoluteExpirationRelativeToNow = GetAbsoluteExpirationRelativeToNow(pAbsExpInSec),
+                SlidingExpiration = GetSlidingExpiration(pSlidingExpInSec)
             };
 
             _cache.Set(pKey, pValue, memCacheOptions);
@@ -54,6 +55,18 @@ namespace BaseToolsUtils.Caching
         {
             _cache.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        private TimeSpan? GetAbsoluteExpirationRelativeToNow(int pAbsExpInSec)
+        {
+            if (pAbsExpInSec < 0) return null;
+            return TimeSpan.FromSeconds(pAbsExpInSec > 0 ? pAbsExpInSec : AbsExpInSecDefault);
+        }
+
+        private TimeSpan? GetSlidingExpiration(int pSlidingExpInSec)
+        {
+            if (pSlidingExpInSec < 0) return null;
+            return TimeSpan.FromSeconds(pSlidingExpInSec > 0 ? pSlidingExpInSec : SlidingExpInSecDefault);
         }
     }
 }

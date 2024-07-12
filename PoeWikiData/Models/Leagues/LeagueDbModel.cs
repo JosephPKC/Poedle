@@ -1,10 +1,10 @@
 ﻿namespace PoeWikiData.Models.Leagues
 {
-    public class LeagueDbModel : BaseDbModel
+    public class LeagueDbModel : BaseNamedDbModel
     {
-        public string ReleaseVersionMajor { get; set; } = "";
-        public string ReleaseVersionMinor { get; set; } = "";
-        public string ReleaseVersionPatch { get; set; } = "";
+        public uint ReleaseVersionMajor { get; set; } = 0;
+        public uint ReleaseVersionMinor { get; set; } = 0;
+        public uint ReleaseVersionPatch { get; set; } = 0;
 
         public string ReleaseVersion
         {

@@ -1,6 +1,5 @@
 ﻿using PoeWikiApi.Models;
 using PoeWikiData.Models.Leagues;
-using System.Data.SQLite;
 
 namespace PoeWikiData.Mappers.Leagues
 {
@@ -8,7 +7,7 @@ namespace PoeWikiData.Mappers.Leagues
     {
         public static LeagueDbModel Map(LeagueWikiModel pModel)
         {
-            (string, string, string) releaseVersionSplit = GetSplitVersion(pModel.ReleaseVersion);
+            (uint, uint, uint) releaseVersionSplit = GetSplitVersion(pModel.ReleaseVersion);
             return new()
             {
                 Id = pModel.Id,
@@ -19,18 +18,12 @@ namespace PoeWikiData.Mappers.Leagues
             };
         }
 
-        public static LeagueDbModelList Read(SQLiteDataReader pReader)
-        {
-            List<LeagueDbModel> models = [];
-            return new(models);
-        }
-
         private static string GetCleanedName(string pName)
         {
             return pName.Replace(" league", "");
         }
 
-        private static (string, string, string) GetSplitVersion(string pVersion)
+        private static (uint, uint, uint) GetSplitVersion(string pVersion)
         {
             string[] versionSplit = pVersion.Split(".");
             string major = "", minor = "", patch = "";
@@ -49,7 +42,7 @@ namespace PoeWikiData.Mappers.Leagues
                 patch = versionSplit[2];
             }
 
-            return (major, minor, patch);
+            return (uint.Parse(major), uint.Parse(minor), uint.Parse(patch));
         }
     }
 }

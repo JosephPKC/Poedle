@@ -1,27 +1,27 @@
 ﻿using System.Text;
 
-namespace PoeWikiData.Utils.SQLite
+namespace PoeWikiData.Utils.SQL
 {
     internal class SQLiteQueryBuilder
     {
-        private bool _isDistinct = false;
+        private bool? _isDistinct = false;
         private uint? _top = null;
-        private string _fields = "";
-        private string _table = "";
-        private string _where = "";
-        private string _groupBy = "";
-        private string _orderBy = "";
-        private bool _isAsc = false;
+        private string _fields = string.Empty;
+        private string _table = string.Empty;
+        private string _where = string.Empty;
+        private string _groupBy = string.Empty;
+        private string _orderBy = string.Empty;
+        private bool? _isAsc = false;
 
         public SQLiteQueryBuilder() { }
 
         public SQLiteQueryBuilder Select(string? pFields, bool pIsAppend = false)
         {
-            _fields = BaseUtils.SetOrAppend(_fields, pFields, pIsAppend);
+            _fields = StringUtils.SetOrAppend(_fields, pFields, pIsAppend);
             return this;
         }
 
-        public SQLiteQueryBuilder Distinct(bool pIsDistinct = true)
+        public SQLiteQueryBuilder Distinct(bool? pIsDistinct = true)
         {
             _isDistinct = pIsDistinct;
             return this;
@@ -35,29 +35,29 @@ namespace PoeWikiData.Utils.SQLite
 
         public SQLiteQueryBuilder From(string? pTable, bool pIsAppend = false)
         {
-            _table = BaseUtils.SetOrAppend(_table, pTable, pIsAppend);
+            _table = StringUtils.SetOrAppend(_table, pTable, pIsAppend);
             return this;
         }
 
         public SQLiteQueryBuilder Where(string? pConditions, bool pIsAppend = false)
         {
-            _where = BaseUtils.SetOrAppend(_where, pConditions, pIsAppend);
+            _where = StringUtils.SetOrAppend(_where, pConditions, pIsAppend);
             return this;
         }
 
         public SQLiteQueryBuilder GroupBy(string? pGroups, bool pIsAppend = false)
         {
-            _groupBy = BaseUtils.SetOrAppend(_groupBy, pGroups, pIsAppend);
+            _groupBy = StringUtils.SetOrAppend(_groupBy, pGroups, pIsAppend);
             return this;
         }
 
         public SQLiteQueryBuilder OrderBy(string? pOrder, bool pIsAppend = false)
         {
-            _orderBy = BaseUtils.SetOrAppend(_orderBy, pOrder, pIsAppend);
+            _orderBy = StringUtils.SetOrAppend(_orderBy, pOrder, pIsAppend);
             return this;
         }
 
-        public SQLiteQueryBuilder Asc(bool pIsAsc)
+        public SQLiteQueryBuilder Asc(bool? pIsAsc)
         {
             _isAsc = pIsAsc;
             return this;
@@ -74,7 +74,7 @@ namespace PoeWikiData.Utils.SQLite
 
             // SELECT FIELDS FROM TABLE
             queryBuilder.Append("SELECT ");
-            if (_isDistinct)
+            if (_isDistinct != null && _isDistinct.Value)
             {
                 queryBuilder.Append($"DISTINCT ");
             }
@@ -101,9 +101,11 @@ namespace PoeWikiData.Utils.SQLite
             if (!string.IsNullOrWhiteSpace(_orderBy))
             {
                 queryBuilder.Append($"ORDER BY {_orderBy} ");
+                if (_isAsc != null)
+                {
+                    queryBuilder.Append(_isAsc.Value ? "ASC" : "DESC");
+                }
             }
-
-            queryBuilder.Append(_isAsc ? "ASC" : "DESC");
 
             return queryBuilder.ToString();
         }

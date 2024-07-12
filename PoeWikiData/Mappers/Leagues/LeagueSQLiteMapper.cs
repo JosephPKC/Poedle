@@ -6,15 +6,16 @@ namespace PoeWikiData.Mappers.Leagues
 {
     internal static class LeagueSQLiteMapper
     {
-        public static SQLiteValues Map(LeagueDbModel pModel)
+        public static Models.SQLiteValues Map(LeagueDbModel pModel)
         {
-            List<string> values =
+            IEnumerable<string> values =
             [
-                SQLiteHelper.SQLiteString(null),
-                SQLiteHelper.SQLiteString(pModel.Name),
-                SQLiteHelper.SQLiteString(pModel.ReleaseVersionMajor),
-                SQLiteHelper.SQLiteString(pModel.ReleaseVersionMinor),
-                SQLiteHelper.SQLiteString(pModel.ReleaseVersionPatch),
+                pModel.Id.ToString(),
+                SQLiteUtils.SQLiteString(StringUtils.TitleCase(pModel.Name)),
+                SQLiteUtils.SQLiteString(pModel.Name),
+                pModel.ReleaseVersionMajor.ToString(),
+                pModel.ReleaseVersionMinor.ToString(),
+                pModel.ReleaseVersionPatch.ToString()
             ];
             return new(values);
         }

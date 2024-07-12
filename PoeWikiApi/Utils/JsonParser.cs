@@ -16,9 +16,9 @@ namespace PoeWikiApi.Utils
             return jsonDto;
         }
 
-        public static List<T> ParseJsonList<T>(string pJsonString)
+        public static IEnumerable<T> ParseJsonList<T>(string pJsonString)
         {
-            List<T>? jsonDtoList = ParseJson<List<T>>(pJsonString);
+            IEnumerable<T>? jsonDtoList = ParseJson<IEnumerable<T>>(pJsonString);
             if (jsonDtoList == null)
             {
                 return [];
@@ -38,9 +38,9 @@ namespace PoeWikiApi.Utils
             return jsonDtoDict;
         }
 
-        public static Dictionary<K, List<T>> ParseJsonListDict<K, T>(string pJsonString) where K : notnull
+        public static Dictionary<K, IEnumerable<T>> ParseJsonListDict<K, T>(string pJsonString) where K : notnull
         {
-            Dictionary<K, List<T>>? jsonDtoDict = ParseJson<Dictionary<K, List<T>>>(pJsonString);
+            Dictionary<K, IEnumerable<T>>? jsonDtoDict = ParseJson<Dictionary<K, IEnumerable<T>>>(pJsonString);
             if (jsonDtoDict == null)
             {
                 return [];
@@ -59,7 +59,7 @@ namespace PoeWikiApi.Utils
                 Converters =
                 {
                     new BoolJsonConverter(),
-                    new uintJsonConverter(),
+                    new UintJsonConverter(),
                     new StringJsonConverter(),
                     new StringListJsonConverter()
                 }
@@ -96,7 +96,7 @@ namespace PoeWikiApi.Utils
         }
     }
 
-    public class uintJsonConverter : JsonConverter<uint>
+    public class UintJsonConverter : JsonConverter<uint>
     {
         public override bool HandleNull => true;
 
@@ -123,7 +123,7 @@ namespace PoeWikiApi.Utils
         {
             if (pReader.TokenType == JsonTokenType.Null)
             {
-                return "";
+                return string.Empty;
             }
 
             return pReader.GetString();

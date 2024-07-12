@@ -1,6 +1,8 @@
 ﻿using BaseToolsUtils.Logging;
 using BaseToolsUtils.Logging.Writers;
 using PoeWikiData;
+using PoeWikiData.Models.Leagues;
+using PoeWikiData.Models.UniqueItems;
 
 namespace PoeDbUpdate
 {
@@ -24,14 +26,14 @@ namespace PoeDbUpdate
                 case "UPDATE":
                     Console.WriteLine($"Updating Db Values for {filePath}");
                     db = new(filePath, true, log);
-                    db.UpdateData();
+                    db.ResetData();
                     Console.WriteLine("Done!");
                     break;
                 case "R":
                 case "RESET":
                     Console.WriteLine($"Resetting Meta Data for {filePath}");
                     db = new(filePath, false, log);
-                    db.ResetMetaData();
+                    db.ClearMetaData();
                     Console.WriteLine("Done!");
                     break;
                 case "H":
@@ -55,8 +57,14 @@ namespace PoeDbUpdate
 
         private static void RunTests(PoeDbManager pDb)
         {
-            pDb.UpdateData();
-            pDb.ResetMetaData();
+            pDb.ResetData();
+            //pDb.ClearMetaData();
+
+            LeagueDbModel? league = pDb.GetById<LeagueDbModel>(619);
+            Console.WriteLine($"TEST: GOT LEAGUE: {league?.Name}.");
+            UniqueItemDbModel? unique = pDb.GetById<UniqueItemDbModel>(37106);
+            //IEnumerable<UniqueItemDbModel> uniques = pDb.GetAll<UniqueItemDbModel>();
+            //Console.WriteLine($"TEST: GOT UNIQUES COUNT: {uniques.Count()}.");
         }
     }
 } 

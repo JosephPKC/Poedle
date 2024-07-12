@@ -6,22 +6,22 @@ namespace PoeWikiApi.Models
     public class UniqueItemWikiModel : BaseWikiModel
     {
         [JsonPropertyName("class")]
-        public string ItemClass { get; set; } = "";
+        public string ItemClass { get; set; } = string.Empty;
         [JsonPropertyName("base item")]
-        public string BaseItem { get; set; } = "";
-        public List<string> Influences { get; set; } = [];
+        public string BaseItem { get; set; } = string.Empty;
+        public IEnumerable<string> Influences { get; set; } = [];
         [JsonPropertyName("flavour text")]
-        public string FlavourText { get; set; } = "";
+        public string FlavourText { get; set; } = string.Empty;
         [JsonPropertyName("drop monsters")]
-        public List<string> DropMonsters { get; set; } = [];
+        public IEnumerable<string> DropMonsters { get; set; } = [];
         [JsonPropertyName("drop text")]
-        public string DropText { get; set; } = "";
+        public string DropText { get; set; } = string.Empty;
         [JsonPropertyName("release version")]
-        public string ReleaseVersion { get; set; } = "";
+        public string ReleaseVersion { get; set; } = string.Empty;
         [JsonPropertyName("implicit stat text")]
-        public string ImplicitStatText { get; set; } = "";
+        public string ImplicitStatText { get; set; } = string.Empty;
         [JsonPropertyName("explicit stat text")]
-        public string ExplicitStatText { get; set; } = "";
+        public string ExplicitStatText { get; set; } = string.Empty;
 
         [JsonPropertyName("required level")]
         public uint ReqLvl { get; set; }

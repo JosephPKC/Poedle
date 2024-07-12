@@ -13,7 +13,7 @@ namespace PoeWikiApi.Endpoints
             return GetFirstDataModel<LeagueWikiModel>(_cargoTitle, CargoParamsMap[CargoTypes.LEAGUES].Tables, CargoParamsMap[CargoTypes.LEAGUES].Fields, $"{CargoParamsMap[CargoTypes.LEAGUES].Where} AND _ID=\"{pId}\"");
         }
 
-        public List<LeagueWikiModel> GetAll()
+        public IEnumerable<LeagueWikiModel> GetAll()
         {
             return GetListWithBatching<LeagueWikiModel>(_cargoTitle, CargoParamsMap[CargoTypes.LEAGUES].Tables, CargoParamsMap[CargoTypes.LEAGUES].Fields, CargoParamsMap[CargoTypes.LEAGUES].Where, 500, 0);
         }

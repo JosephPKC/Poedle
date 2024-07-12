@@ -13,7 +13,7 @@ namespace PoeWikiApi.Endpoints
             return GetFirstDataModel<UniqueItemWikiModel>(_cargoTitle, CargoParamsMap[CargoTypes.UNIQUES].Tables, CargoParamsMap[CargoTypes.UNIQUES].Fields, $"{CargoParamsMap[CargoTypes.UNIQUES].Where} AND _ID=\"{pId}\"");
         }
 
-        public List<UniqueItemWikiModel> GetAll()
+        public IEnumerable<UniqueItemWikiModel> GetAll()
         {
             return GetListWithBatching<UniqueItemWikiModel>(_cargoTitle, CargoParamsMap[CargoTypes.UNIQUES].Tables, CargoParamsMap[CargoTypes.UNIQUES].Fields, CargoParamsMap[CargoTypes.UNIQUES].Where, 250, 0);
         }

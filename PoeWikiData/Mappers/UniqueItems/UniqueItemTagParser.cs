@@ -3,7 +3,7 @@ using PoeWikiData.Utils;
 
 namespace PoeWikiData.Mappers.UniqueItems
 {
-    public static class UniqueTagsParser
+    public static class UniqueItemTagsParser
     {
         /// <summary>
         /// Item is abyssal if it has abyssal sockets naturally.
@@ -12,7 +12,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsAbyssal(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Abyssal [[Item socket|Sockets]]") || BaseUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Abyssal [[Item socket|Sockets]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Abyssal [[Item socket|Sockets]]") || StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Abyssal [[Item socket|Sockets]]");
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsAnointable(UniqueItemWikiModel pUnique)
         {
-            return IsBlightDrop(pUnique) || BaseUtils.EqualsIgnoreCase(pUnique.ItemClass, "Amulet") || BaseUtils.EqualsIgnoreCase(pUnique.ItemClass, "Ring");
+            return IsBlightDrop(pUnique) || StringUtils.EqualsIgnoreCase(pUnique.ItemClass, "Amulet") || StringUtils.EqualsIgnoreCase(pUnique.ItemClass, "Ring");
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         {
             // NOTE: Simulacrum Boss drops are technically not boss drops. But, they require killing the boss and its wave.
             // NOTE: Synthesised Maps drop from any Atlas boss.
-            return pUnique.DropMonsters.Count > 0 || IsSimulacrumDrop(pUnique) || IsAtlasBossDrop(pUnique);
+            return pUnique.DropMonsters.Any() || IsSimulacrumDrop(pUnique) || IsAtlasBossDrop(pUnique);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsGrantsSkills(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[Level]]") || BaseUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Grants [[Level]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[Level]]") || StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Grants [[Level]]");
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsTriggersSkill(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Trigger [[Level]]") || BaseUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Triggers [[Level]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Trigger [[Level]]") || StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Triggers [[Level]]");
         }
 
 
@@ -178,7 +178,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsAbyssalTroveDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Abyssal Troves");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Abyssal Troves");
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsAbyssalBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "ReligiousTemplar");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "ReligiousTemplar");
         }
         #endregion
 
@@ -201,7 +201,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsAtlasBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Map Bosses");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Map Bosses");
         }
         #endregion
 
@@ -223,7 +223,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsMastermindDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "BetrayalCatarina1");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "BetrayalCatarina1");
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsSafehouseDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Safehouse");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Safehouse");
         }
         #endregion
 
@@ -255,7 +255,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsBlightedMapDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Blighted Map");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Blighted Map");
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsBlightRavagedMapDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Blight-ravaged map");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Blight-ravaged map");
         }
         #endregion
 
@@ -314,7 +314,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         public static bool IsBreachUpgrade(UniqueItemWikiModel pUnique)
         {
             // Items mention Flawless Breachstone.
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Flawless Breachstone");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Flawless Breachstone");
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         public static bool IsBreachUpgradeable(UniqueItemWikiModel pUnique)
         {
             // Items mention Breach Monsters.
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Breach Monsters");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Breach Monsters");
         }
         #endregion
 
@@ -347,7 +347,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsDeliriumBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueAffliction");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueAffliction");
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsSimulacrumDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Simulacrum");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Simulacrum");
         }
         #endregion
 
@@ -380,7 +380,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsDelveNonAbyssBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueDelve");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueDelve");
         }
 
         /// <summary>
@@ -414,7 +414,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsExpeditionZoneDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Expedition monsters");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Expedition monsters");
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsExpeditionBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueExpedition");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueExpedition");
         }
         #endregion
 
@@ -446,7 +446,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsBeachheadDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "HarbingerPortal");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "HarbingerPortal");
         }
 
         /// <summary>
@@ -502,7 +502,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsHeistCacheDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Smuggler's Cache");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Smuggler's Cache");
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsCurioDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Curio Display");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Curio Display");
         }
 
 
@@ -523,7 +523,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsHeistBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueHeist");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueHeist");
         }
         #endregion
 
@@ -556,7 +556,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsIncurionBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "VaalSaucerBoss");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "VaalSaucerBoss");
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsIncursionRoomDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Incursion Room");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Incursion Room");
         }
 
         /// <summary>
@@ -616,7 +616,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsLabDrop(UniqueItemWikiModel pUnique)
         {
-            if (BaseUtils.ContainsIgnoreCase(pUnique.DropText, "labyrinth")) return true;
+            if (StringUtils.ContainsIgnoreCase(pUnique.DropText, "labyrinth")) return true;
             // Death's Door needs to be added manually
             return pUnique.Id == 133059;
         }
@@ -640,7 +640,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsLegionGeneralDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagionLeague");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagionLeague");
         }
 
         /// <summary>
@@ -650,7 +650,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsDomainDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "Domain of Timeless Conflict");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "Domain of Timeless Conflict");
         }
         #endregion
 
@@ -662,7 +662,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsRitualDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "[[Ritual]]s");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "[[Ritual]]s");
         }
         #endregion
 
@@ -684,7 +684,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsSanctumWithoutRelicDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "[[Lycia, Herald of the Scourge]] in a [[Sanctum]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "[[Lycia, Herald of the Scourge]] in a [[Sanctum]]");
         }
 
         /// <summary>
@@ -694,7 +694,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsSanctumWithRelicDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "is applied to a [[Sanctum]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "is applied to a [[Sanctum]]");
         }
         #endregion
 
@@ -707,7 +707,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         public static bool IsTier17BossDrop(UniqueItemWikiModel pUnique)
         {
             string[] t17Maps = ["Abomination Map", "Citadel Map", "Fortress Map", "Sanctuary Map", "Ziggurat Map"];
-            return BaseUtils.ContainsAnyIgnoreCase(pUnique.DropText, [.. t17Maps]);
+            return StringUtils.ContainsAnyIgnoreCase(pUnique.DropText, [.. t17Maps]);
         }
         #endregion
 
@@ -729,7 +729,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsUltimatumTrialDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsIgnoreCase(pUnique.DropText, "[[Ultimatum]] encounters");
+            return StringUtils.ContainsIgnoreCase(pUnique.DropText, "[[Ultimatum]] encounters");
         }
 
         /// <summary>
@@ -739,7 +739,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsTrialMasterDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueUltimatum");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "LeagueUltimatum");
         }
         #endregion
 
@@ -751,7 +751,7 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsWarbandsBossDrop(UniqueItemWikiModel pUnique)
         {
-            return BaseUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "Wb\\/Wb");
+            return StringUtils.ContainsSubIgnoreCase(pUnique.DropMonsters, "Wb\\/Wb");
         }
         #endregion
 

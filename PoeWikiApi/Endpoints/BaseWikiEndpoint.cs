@@ -19,13 +19,13 @@ namespace PoeWikiApi.Endpoints
             return JsonParser.ParseJsonList<T>(GetFromCacheOrApi(BuildQueryString(pTitle, pTables, pFields, pWhere, 1, 0))).FirstOrDefault();
         }
 
-        protected List<T> GetListWithBatching<T>(string pTitle, string pTables, string pFields, string pWhere, int pLimit, int pOffsetStart)
+        protected IEnumerable<T> GetListWithBatching<T>(string pTitle, string pTables, string pFields, string pWhere, int pLimit, int pOffsetStart)
         {
             List<T> returnList = [];
             for (int offset = pOffsetStart, count = pLimit; count >= pLimit; offset += pLimit)
             {
-                List<T> batchList = JsonParser.ParseJsonList<T>(GetFromCacheOrApi(BuildQueryString(pTitle, pTables, pFields, pWhere, pLimit, offset)));
-                count = batchList.Count;
+                IEnumerable<T> batchList = JsonParser.ParseJsonList<T>(GetFromCacheOrApi(BuildQueryString(pTitle, pTables, pFields, pWhere, pLimit, offset)));
+                count = batchList.Count();
                 returnList.AddRange(batchList);
             }
 

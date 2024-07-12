@@ -60,7 +60,7 @@ namespace BaseToolsUtils.Logging
                 LogLevel.DEBUG => "DEBUG",
                 LogLevel.ERROR => "ERROR",
                 LogLevel.VERBOSE => "VERBOSE",
-                _ => "",
+                _ => string.Empty,
             };
 
             if (Settings.MakeTimeStamp)

@@ -5,6 +5,6 @@ namespace PoeWikiApi.Models
     public class LeagueWikiModel : BaseWikiModel
     {
         [JsonPropertyName("release version")]
-        public string ReleaseVersion { get; set; } = "";
+        public string ReleaseVersion { get; set; } = string.Empty;
     }
 }

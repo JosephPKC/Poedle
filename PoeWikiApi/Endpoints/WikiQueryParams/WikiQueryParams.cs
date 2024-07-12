@@ -13,10 +13,10 @@
 
         public class CargoParams
         {
-            public string Tables { get; set; } = "";
-            public string Fields { get; set; } = "";
-            public string Where { get; set; } = "";
-            public string Join { get; set; } = "";
+            public string Tables { get; set; } = string.Empty;
+            public string Fields { get; set; } = string.Empty;
+            public string Where { get; set; } = string.Empty;
+            public string Join { get; set; } = string.Empty;
         }
 
         public static readonly Dictionary<CargoTypes, CargoParams> CargoParamsMap = new()
