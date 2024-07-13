@@ -20,7 +20,7 @@ namespace PoeWikiData.Mappers.StaticData
             return new()
             {
                 Id = pRefList.GetId(pEnumName) ?? 0,
-                Name = pRefList.GetName(pEnumValue)
+                Name = pRefList.GetName(pEnumValue) ?? string.Empty
             };
         }
     }

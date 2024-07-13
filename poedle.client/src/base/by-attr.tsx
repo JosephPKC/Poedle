@@ -47,9 +47,13 @@ function GameArea() {
             return;
         }
 
+        console.log("Correct: " + correctAnswer.value + " Guess: " + selectedGuess.value);
+
         getGuessResultFromAPI(selectedGuess.value, correctAnswer.value);
         removeSelectedGuess(availGuesses, selectedGuess);
         setSelectedGuess(null);
+        setScore(score + 1);
+        processIfWin(selectedGuess.value, correctAnswer.value);
     }
     // Handle when the play again button is clicked
     const onClickPlayAgain = () => {
@@ -121,13 +125,13 @@ function GameArea() {
         return () => abortController.abort();
     }
 
-    async function getGuessResultFromAPI(guessId: number, correctAnswerValue: number) {
+    async function getGuessResultFromAPI(guessId: number, correctAnswerId: number) {
         const abortController = new AbortController();
 
-        const response = await fetch("/poedle/byattr/Guess/" + guessId + "/" + correctAnswerValue);
+        const response = await fetch("/poedle/byattr/Guess/" + guessId + "/" + correctAnswerId);
         const data = await response.json();
         console.log(data);
-        processResults(data, correctAnswerValue, guessId);
+        setResults([data, ...results!]);
 
         return () => abortController.abort();
     }
@@ -140,11 +144,8 @@ function GameArea() {
         setAvailGuesses(newAvailGuesses);
     }
 
-    function processResults(result: AttrGuessResult, correctAnswerValue: number, selectedGuessValue: number) {
-        console.log("Correct: " + correctAnswerValue + " Guess: " + selectedGuessValue);
-        setScore(score + 1);
-        setResults([result, ...results!]);
-        if (correctAnswerValue == selectedGuessValue) {
+    function processIfWin(guessId: number, correctAnswerId: number) {
+        if (guessId == correctAnswerId) {
             setIsWin(true);
             // Maybe post to score here
         }

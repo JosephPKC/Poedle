@@ -1,57 +1,58 @@
-﻿namespace PoeWikiData.Models.UniqueItems
+﻿using PoeWikiData.Models.LookUps;
+
+namespace PoeWikiData.Models.UniqueItems
 {
-    /// <summary>
-    /// Regular: Key (id) -> Value (name)
-    /// Reverse: Key (name) -> Value (id)
-    /// </summary>
-    internal class UniqueItemDbLookUp(IEnumerable<UniqueItemDbModel> pModels) : BaseDbLookUp<UniqueItemDbModel, uint, string, string, uint?>(pModels)
+    internal class UniqueItemDbLookUp(IEnumerable<UniqueItemDbModel> pModels) : BaseDbModelListLookUp<UniqueItemDbModel>(pModels), IModelIdLookUp<UniqueItemDbModel>, IModelNameListLookUp<UniqueItemDbModel>
     {
-        public bool HasId(uint pId)
+        private readonly Dictionary<uint, UniqueItemDbModel> _idLookUp = [];
+        private readonly Dictionary<string, IList<UniqueItemDbModel>> _nameLookUp = [];
+
+        public override IList<UniqueItemDbModel> GetAll()
         {
-            return HasKey(pId);
+            return [.. _idLookUp.Values];
         }
 
-        public uint? GetId(string pName)
+        public UniqueItemDbModel? GetById(uint pId)
         {
-            return GetValRev(pName);
+            return GetModel(_idLookUp, pId);
+        }
+
+        public IEnumerable<UniqueItemDbModel>? GetByName(string pName)
+        {
+            return GetModels(_nameLookUp, pName);
+        }
+
+        public IEnumerable<uint>? GetId(string pName)
+        {
+            return GetByName(pName)?.Select(x => x.Id);
+        }
+
+        public string? GetName(uint pId)
+        {
+            return GetById(pId)?.Name;
+        }
+
+        public bool HasId(uint pId)
+        {
+            return _idLookUp.ContainsKey(pId);
         }
 
         public bool HasName(string pName)
         {
-            return HasRevKey(pName);
-        }
-
-        public string GetName(uint pId)
-        {
-            return GetVal(pId) ?? string.Empty;
-        }
-
-        public UniqueItemDbModel? GetModelById(uint pId)
-        {
-            return GetModel(pId);
-        }
-
-        public UniqueItemDbModel? GetModelByName(string pName)
-        {
-            return GetRevModel(pName);
+            return _nameLookUp.ContainsKey(pName);
         }
 
         protected override void ProcessModel(UniqueItemDbModel pModel)
         {
-            _modelLookUp.Add(pModel.Id, pModel);
-            _reverseModelLookUp.Add(pModel.DisplayName, pModel);
-        }
-
-        protected override string? GetVal(uint pKey)
-        {
-            if (_modelLookUp.TryGetValue(pKey, out UniqueItemDbModel? model)) return model.Name;
-            return null;
-        }
-
-        protected override uint? GetValRev(string pRevKey)
-        {
-            if (_reverseModelLookUp.TryGetValue(pRevKey, out UniqueItemDbModel? model)) return model.Id;
-            return null;
+            _idLookUp.Add(pModel.Id, pModel);
+            if (_nameLookUp.TryGetValue(pModel.Name, out IList<UniqueItemDbModel>? value))
+            {
+                value.Add(pModel);
+            }
+            else
+            {
+                _nameLookUp.Add(pModel.Name, [pModel]);
+            }
         }
     }
 }

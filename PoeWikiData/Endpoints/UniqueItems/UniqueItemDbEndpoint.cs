@@ -1,15 +1,15 @@
-﻿using System.Data.SQLite;
-using System.Reflection;
+﻿using System.Data;
+using System.Data.SQLite;
 using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi;
 using PoeWikiApi.Models;
-using PoeWikiData.Mappers.Leagues;
 using PoeWikiData.Mappers.Links;
 using PoeWikiData.Mappers.UniqueItems;
 using PoeWikiData.Models;
 using PoeWikiData.Models.Leagues;
 using PoeWikiData.Models.Links;
+using PoeWikiData.Models.LookUps;
 using PoeWikiData.Models.StaticData;
 using PoeWikiData.Models.UniqueItems;
 using PoeWikiData.Schema;
@@ -51,56 +51,49 @@ namespace PoeWikiData.Endpoints.UniqueItems
         #endregion
 
         #region "Select"
-        public UniqueItemDbModel? Select(uint pId)
+        public UniqueItemDbModel? Select(uint pId, LeagueDbLookUp pAllLeagues)
         {
             string where = $"UniqueItemId={SQLiteUtils.SQLiteString(pId.ToString())}";
             UniqueItemDbModel? model = SelectOne(PoeDbSchemaTypes.UniqueItems, UniqueItemSQLiteReader.Read, where);
             if (model == null) return null;
 
-            AddLinkedData(model);
+            AddAllLinkedData(model, pAllLeagues);
             return model;
         }
 
-        public UniqueItemDbLookUp SelectAll()
+        public UniqueItemDbLookUp SelectAll(LeagueDbLookUp pAllLeagues)
         {
             IEnumerable<UniqueItemDbModel> allModels = SelectAll(PoeDbSchemaTypes.UniqueItems, UniqueItemSQLiteReader.Read);
             foreach (UniqueItemDbModel model in allModels)
             {
-                AddLinkedData(model);
+                AddAllLinkedData(model, pAllLeagues);
             }
 
             return new(allModels);
         }
 
-        private void AddLinkedData(UniqueItemDbModel pModel)
+        private void AddAllLinkedData(UniqueItemDbModel pModel, LeagueDbLookUp pAllLeagues)
         {
-            // Get link data too
-            // SELECT * FROM LINK TABLE WHERE UniqueItemId == {id}
-            string where = $"UniqueItemId={SQLiteUtils.SQLiteString(pModel.Id.ToString())}";
-            IEnumerable<LinkDbModel> links = SelectAll(PoeDbSchemaTypes.UniqueItems_DropSources, LinkDbReader.Read, where);
-            UniqueItemDbLinker.AddDropSources(pModel, links);
+            IEnumerable<StaticDataDbModel> GetDropSources(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.DropSources);
+            pModel.DropSources = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropSources, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetDropSources);
 
-            // Select texts, which have 3
-            //SELECT * FROM TEXT LINK TABLE WHERE UniqueItemId == {id} ORDER BY Order ASC
+            IEnumerable<StaticDataDbModel> GetDropTypes(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.DropTypes);
+            pModel.DropTypes = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropTypes, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetDropTypes);
 
-            // SELECT * FROM LINK TABLE WHERE UniqueItemId == {id}
-            where = $"UniqueItemId={SQLiteUtils.SQLiteString(pModel.Id.ToString())}";
-            IEnumerable<TextLinkDbModel> textLinks = SelectAll(PoeDbSchemaTypes.UniqueItems_FlavourTexts, LinkDbReader.ReadText, where);
-        }
+            IEnumerable<StaticDataDbModel> GetItemAspects(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.ItemAspects);
+            pModel.ItemAspects = SelectLinks(PoeDbSchemaTypes.UniqueItems_ItemAspects, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetItemAspects);
 
-        private IEnumerable<StaticDataDbModel> GetAllDropSources(SQLiteDataReader pReader, uint pModelId)
-        {
-            ICollection<StaticDataDbModel> allData = [];
-            while (pReader.Read())
-            {
-                StaticDataDbModel data = new()
-                {
-                    Id = (uint)pReader.GetInt32(1),
-                    Name = StaticDataMasterRef.DropSources.GetName((uint)pReader.GetInt32(1))
-                };
-                allData.Add(data);
-            }
-            return allData;
+            IEnumerable<LeagueDbModel> GetLeaguesIntroduced(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, pAllLeagues);
+            pModel.LeaguesIntroduced = SelectLinks(PoeDbSchemaTypes.UniqueItems_LeaguesIntroduced, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetLeaguesIntroduced);
+
+            IEnumerable<string> GetFlavourTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
+            pModel.FlavourText = SelectLinks(PoeDbSchemaTypes.UniqueItems_FlavourTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetFlavourTexts);
+
+            IEnumerable<string> GetImplicitStatTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
+            pModel.ImplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ImplicitStatTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetImplicitStatTexts);
+
+            IEnumerable<string> GetExplicitStatTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
+            pModel.ExplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ExplicitStatTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetExplicitStatTexts);
         }
         #endregion
     }

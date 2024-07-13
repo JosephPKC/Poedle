@@ -13,9 +13,9 @@ namespace PoeWikiData.Mappers.Leagues
                 pModel.Id.ToString(),
                 SQLiteUtils.SQLiteString(StringUtils.TitleCase(pModel.Name)),
                 SQLiteUtils.SQLiteString(pModel.Name),
-                pModel.ReleaseVersionMajor.ToString(),
-                pModel.ReleaseVersionMinor.ToString(),
-                pModel.ReleaseVersionPatch.ToString()
+                SQLiteUtils.SQLiteString(pModel.ReleaseVersion.Major),
+                SQLiteUtils.SQLiteString(pModel.ReleaseVersion.Minor),
+                SQLiteUtils.SQLiteString(pModel.ReleaseVersion.Patch)
             ];
             return new(values);
         }

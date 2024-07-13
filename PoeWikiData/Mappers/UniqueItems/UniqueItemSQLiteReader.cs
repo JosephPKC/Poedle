@@ -30,7 +30,7 @@ namespace PoeWikiData.Mappers.UniqueItems
 
         private static StaticDataDbModel GetItemClass(uint pItemClassId)
         {
-            return StaticDataMasterRef.ItemClasses.GetModelById(pItemClassId) ?? new();
+            return StaticDataMasterRef.ItemClasses.GetById(pItemClassId) ?? new();
         }
     }
 }

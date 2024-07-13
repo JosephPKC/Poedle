@@ -7,6 +7,7 @@ using PoeWikiApi.Models;
 using PoeWikiData.Models;
 using PoeWikiData.Schema;
 using PoeWikiData.Utils.SQL;
+using PoeWikiData.Utils.SQLite;
 
 namespace PoeWikiData.Endpoints
 {
@@ -137,9 +138,16 @@ namespace PoeWikiData.Endpoints
             PoeDbSchema schema = PoeDbSchemaManager.GetSchema(pSchemaType);
             return Select(schema.Table, null, pWhere, null, pOrderBy, pIsAsc, null, false, pCreateModel);
         }
+
+        protected IEnumerable<TData> SelectLinks<TLinkModel, TData>(PoeDbSchemaTypes pSchemaType, string pIdCol, uint pId, Func<IDataReader, IEnumerable<TLinkModel>> pCreateModel, Func<IEnumerable<TLinkModel>, IEnumerable<TData>> pCreateModelFromLinks) where TLinkModel : BaseDbModel
+        {
+            string where = $"{pIdCol}={SQLiteUtils.SQLiteString(pId.ToString())}";
+            IEnumerable<TLinkModel> links = SelectAll(pSchemaType, pCreateModel, where);
+            return pCreateModelFromLinks(links);
+        }
         #endregion
 
-            #region "Basic Generic Queries"
+        #region "Basic Generic Queries"
         private void Create(string pTableName, IEnumerable<string> pColumns)
         {
             if (string.IsNullOrWhiteSpace(pTableName))
@@ -167,7 +175,7 @@ namespace PoeWikiData.Endpoints
             ExecuteNonQuery(query);
         }
 
-        private void Insert(string pTableName, IEnumerable<string>? pSpecifiedColumns, Models.SQLiteValues pValues)
+        private void Insert(string pTableName, IEnumerable<string>? pSpecifiedColumns, SQLiteValues pValues)
         {
             ArgumentNullException.ThrowIfNull(pValues);
 
@@ -181,7 +189,7 @@ namespace PoeWikiData.Endpoints
             ExecuteNonQuery(query);
         }
 
-        private void InsertAll(string pTableName, IEnumerable<string>? pSpecifiedColumns, IEnumerable<Models.SQLiteValues> pAllValues)
+        private void InsertAll(string pTableName, IEnumerable<string>? pSpecifiedColumns, IEnumerable<SQLiteValues> pAllValues)
         {
             if (pAllValues == null || !pAllValues.Any())
             {
@@ -220,13 +228,6 @@ namespace PoeWikiData.Endpoints
 
             string query = queryBuilder.ToString();
             return ExecuteQuery(query, pCreateModels);
-        }
-
-        private TDbModel? SelectFirst<TDbModel>(string pTableName, string? pFields, string? pWhere, string? pGroupBy, string? pOrderBy, bool pIsAsc, uint? pTop, bool pIsDistinct, Func<IDataReader, IEnumerable<TDbModel>> pCreateModels) where TDbModel : BaseDbModel
-        {
-            IEnumerable<TDbModel> all = Select(pTableName, pFields, pWhere, pGroupBy, pOrderBy, pIsAsc, pTop, pIsDistinct, pCreateModels);
-            if (!all.Any()) return null;
-            return all.First();
         }
         #endregion
 

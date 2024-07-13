@@ -1,6 +1,4 @@
-﻿using PoeWikiData.Models;
-using PoeWikiData.Models.Enums;
-
+﻿
 namespace Poedle.Server.ByAttr
 {
     public class ByAttrGameState

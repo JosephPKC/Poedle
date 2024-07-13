@@ -51,7 +51,7 @@ namespace PoeWikiData
             return typeof(TModel) switch
             {
                 Type model when model == typeof(LeagueDbModel) => _league.Select(pId) as TModel,
-                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.Select(pId) as TModel,
+                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.Select(pId, _league.SelectAll()) as TModel,
                 _ => null
             };
         }
@@ -61,7 +61,7 @@ namespace PoeWikiData
             return typeof(TModel) switch
             {
                 Type model when model == typeof(LeagueDbModel) => _league.SelectAll().GetAll() as IEnumerable<TModel> ?? [],
-                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.SelectAll().GetAll() as IEnumerable<TModel> ?? [],
+                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.SelectAll(_league.SelectAll()).GetAll() as IEnumerable<TModel> ?? [],
                 _ => []
             };
         }

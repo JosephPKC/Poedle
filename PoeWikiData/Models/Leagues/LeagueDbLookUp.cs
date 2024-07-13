@@ -1,93 +1,91 @@
-﻿namespace PoeWikiData.Models.Leagues
+﻿using PoeWikiData.Models.Common;
+using PoeWikiData.Models.LookUps;
+
+namespace PoeWikiData.Models.Leagues
 {
-    /// <summary>
-    /// Regular: Key (release version) -> Value (name)
-    /// Reverse: Key (name) -> Value (release version)
-    /// </summary>
-    /// <param name="pModels"></param>
-    internal class LeagueDbLookUp(IEnumerable<LeagueDbModel> pModels) : BaseDbLookUp<LeagueDbModel, string, IEnumerable<string>?, string, string>(pModels)
+    internal class LeagueDbLookUp(IEnumerable<LeagueDbModel> pModels) : BaseDbModelListLookUp<LeagueDbModel>(pModels), IModelIdLookUp<LeagueDbModel>, IModelNameLookUp<LeagueDbModel>
     {
-        public bool HasReleaseVersion(string pVersion)
+        private readonly Dictionary<uint, LeagueDbModel> _idLookUp = [];
+        private readonly Dictionary<string, LeagueDbModel> _nameLookUp = [];
+        private readonly Dictionary<string, IList<LeagueDbModel>> _versionLookUp = [];
+
+        public override IList<LeagueDbModel> GetAll()
         {
-            return HasKey(pVersion);
+            return [.. _idLookUp.Values];
         }
 
-        public string GetReleaseVersion(string pName)
+        public LeagueDbModel? GetById(uint pId)
         {
-            return GetValRev(pName) ?? string.Empty;
+            return GetModel(_idLookUp, pId);
         }
 
-        public bool HasLeague(string pName)
+        public LeagueDbModel? GetByName(string pName)
         {
-            return HasRevKey(pName);
+            return GetModel(_nameLookUp, pName);
         }
 
-        public IEnumerable<string> GetLeagues(string pVersion)
+        public IEnumerable<LeagueDbModel>? GetByVersion(DbVersion pVersion, bool pIsMajorMinorOnly = false)
         {
-            return GetVal(pVersion) ?? [];
+            return GetModels(_versionLookUp, pIsMajorMinorOnly ? pVersion.MajorMinorText : pVersion.FullText);
         }
 
-        public IEnumerable<LeagueDbModel> GetModelsByVersion(string pVersion)
+        public uint? GetId(string pName)
         {
-            ICollection<LeagueDbModel> models = [];
-            LeagueDbModel? model1 = GetModel(pVersion);
-            if (model1 != null)
-            {
-                models.Add(model1);
-            }
-
-            LeagueDbModel? model2 = GetModel(GetAltVersion(pVersion));
-            if (model2 != null)
-            {
-                models.Add(model2);
-            }
-
-            return models;
+            return GetByName(pName)?.Id;
         }
 
-        public LeagueDbModel? GetModelByName(string pName)
+        public IEnumerable<uint>? GetId(DbVersion pVersion)
         {
-            return GetRevModel(pName);
+            return GetByVersion(pVersion)?.Select(x => x.Id);
         }
 
-        private static string GetAltVersion(string pVersion)
+        public string? GetName(uint pId)
         {
-            return $"{pVersion}.X";
+            return GetById(pId)?.Name;
+        }
+
+        public IEnumerable<string>? GetName(DbVersion pVersion)
+        {
+            return GetByVersion(pVersion)?.Select(x => x.Name);
+        }
+
+        public DbVersion? GetVersion(uint pId)
+        {
+            return GetById(pId)?.ReleaseVersion;
+        }
+
+        public DbVersion? GetVersion(string pName)
+        {
+            return GetByName(pName)?.ReleaseVersion;
+        }
+
+        public bool HasId(uint pId)
+        {
+            return _idLookUp.ContainsKey(pId);
+        }
+
+        public bool HasName(string pName)
+        {
+            return _nameLookUp.ContainsKey(pName);
+        }
+
+        public bool HasVersion(string pVersion)
+        {
+            return _versionLookUp.ContainsKey(pVersion);
         }
 
         protected override void ProcessModel(LeagueDbModel pModel)
         {
-            if (_modelLookUp.TryGetValue(pModel.ReleaseVersion, out LeagueDbModel? model))
+            _idLookUp.Add(pModel.Id, pModel);
+            _nameLookUp.Add(pModel.Name, pModel);
+            if (_versionLookUp.TryGetValue(pModel.ReleaseVersion.MajorMinorText, out IList<LeagueDbModel>? value))
             {
-                // Add a .1 to it as unfortunately in the past, each release version had two leagues.
-                _modelLookUp.Add(GetAltVersion(pModel.ReleaseVersion), pModel);
+                value.Add(pModel);
             }
             else
             {
-                _modelLookUp.Add(pModel.ReleaseVersion, pModel);
+                _versionLookUp.Add(pModel.ReleaseVersion.MajorMinorText, [pModel]);
             }
-
-            _reverseModelLookUp.Add(pModel.Name, pModel);
-        }
-
-        protected override IEnumerable<string>? GetVal(string pKey)
-        {
-            ICollection<string> result = [];
-            if (_modelLookUp.TryGetValue(pKey, out LeagueDbModel? model1))
-            {
-                result.Add(model1.Name);
-            }
-            if (_modelLookUp.TryGetValue(GetAltVersion(pKey), out LeagueDbModel? model2))
-            {
-                result.Add(model2.Name);
-            }
-            return result;
-        }
-
-        protected override string? GetValRev(string pRevKey)
-        {
-            if (_reverseModelLookUp.TryGetValue(pRevKey, out LeagueDbModel? model)) return model.ReleaseVersion;
-            return null;
         }
     }
 }

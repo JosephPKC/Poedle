@@ -1,57 +1,55 @@
-﻿namespace PoeWikiData.Models.StaticData
+﻿using PoeWikiData.Models.LookUps;
+
+namespace PoeWikiData.Models.StaticData
 {
     /// <summary>
     /// Regular: Key (id) -> Value (name)
     /// Reverse: Key (name) -> Value (id)
     /// </summary>
-    internal class StaticDataDbLookUp(IEnumerable<StaticDataDbModel> pModels) : BaseDbLookUp<StaticDataDbModel, uint, string, string, uint?>(pModels)
+    internal class StaticDataDbLookUp(IEnumerable<StaticDataDbModel> pModels) : BaseDbModelLookUp<StaticDataDbModel>(pModels), IModelIdLookUp<StaticDataDbModel>, IModelNameLookUp<StaticDataDbModel>
     {
-        public bool HasId(uint pId)
+        private readonly Dictionary<uint, StaticDataDbModel> _idLookUp = [];
+        private readonly Dictionary<string, StaticDataDbModel> _nameLookUp = [];
+
+        public override IList<StaticDataDbModel> GetAll()
         {
-            return HasKey(pId);
+            return [.. _idLookUp.Values];
+        }
+
+        public StaticDataDbModel? GetById(uint pId)
+        {
+            return GetModel(_idLookUp, pId);
+        }
+
+        public StaticDataDbModel? GetByName(string pName)
+        {
+            return GetModel(_nameLookUp, pName);
         }
 
         public uint? GetId(string pName)
         {
-            return GetValRev(pName);
+            return GetByName(pName)?.Id;
+        }
+
+        public string? GetName(uint pId)
+        {
+            return GetById(pId)?.Name;
+        }
+
+        public bool HasId(uint pId)
+        {
+            return _idLookUp.ContainsKey(pId);
         }
 
         public bool HasName(string pName)
         {
-            return HasRevKey(pName);
-        }
-
-        public string GetName(uint pId)
-        {
-            return GetVal(pId) ?? string.Empty;
-        }
-
-        public StaticDataDbModel? GetModelById(uint pId)
-        {
-            return GetModel(pId);
-        }
-
-        public StaticDataDbModel? GetModelByName(string pName)
-        {
-            return GetRevModel(pName);
+            return _nameLookUp.ContainsKey(pName);
         }
 
         protected override void ProcessModel(StaticDataDbModel pModel)
         {
-            _modelLookUp.Add(pModel.Id, pModel);
-            _reverseModelLookUp.Add(pModel.Name, pModel);
-        }
-
-        protected override string? GetVal(uint pKey)
-        {
-            if (_modelLookUp.TryGetValue(pKey, out StaticDataDbModel? model)) return model.Name;
-            return null;
-        }
-
-        protected override uint? GetValRev(string pRevKey)
-        {
-            if (_reverseModelLookUp.TryGetValue(pRevKey, out StaticDataDbModel? model)) return model.Id;
-            return null;
+            _idLookUp.Add(pModel.Id, pModel);
+            _nameLookUp.Add(pModel.Name, pModel);
         }
     }
 }

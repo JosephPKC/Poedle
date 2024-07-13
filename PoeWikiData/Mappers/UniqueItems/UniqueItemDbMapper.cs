@@ -35,25 +35,13 @@ namespace PoeWikiData.Mappers.UniqueItems
 
         private static StaticDataDbModel GetItemClass(string pItemClass)
         {
-            return StaticDataMasterRef.ItemClasses.GetModelByName(StringUtils.NoSpaceDash(pItemClass)) ?? new();
+            return StaticDataMasterRef.ItemClasses.GetByName(StringUtils.NoSpaceDash(pItemClass)) ?? new();
         }
 
         private static IEnumerable<LeagueDbModel> GetLeagues(string pReleaseVersion, LeagueDbLookUp pAllLeagues)
         {
-            string[] versionSplit = pReleaseVersion.Split('.');
-            if (versionSplit.Length < 3) return [];
-
-            IEnumerable<string> leagues = pAllLeagues.GetLeagues($"{versionSplit[0]}.{versionSplit[1]}.0");
-            ICollection<LeagueDbModel> leagueModels = [];
-            foreach (string league in leagues)
-            {
-                LeagueDbModel? model = pAllLeagues.GetModelByName(league);
-                if (model == null) continue;
-
-                leagueModels.Add(model);
-            }
-
-            return leagueModels;
+            IEnumerable<LeagueDbModel>? leagues = pAllLeagues.GetByVersion(new(pReleaseVersion));
+            return leagues ?? [];
         }
 
         private static IEnumerable<StaticDataDbModel> GetItemAspects(UniqueItemWikiModel pModel)
@@ -140,7 +128,7 @@ namespace PoeWikiData.Mappers.UniqueItems
             return StringUtils.RemoveBlankLines(cleanedTexts);
         }
 
-        private static IEnumerable<string> GetStatTexts(string pStatText)
+        private static List<string> GetStatTexts(string pStatText)
         {
             // Clean up [[word1|word2].
             string cleanedText = HtmlTextCleaner.ReplaceBracketGroupWithSecond(pStatText);
@@ -176,10 +164,10 @@ namespace PoeWikiData.Mappers.UniqueItems
             cleanedText = cleanedText.Replace("\nor\n", "or");
 
             // Split the text into individual lines.
-            IEnumerable<string> cleanedTextLines = StringUtils.SeparateStringLines(cleanedText);
-            cleanedTextLines = StringUtils.RemoveBlankLines(cleanedTextLines);
+            List<string> cleanedTextLines = (List<string>)StringUtils.SeparateStringLines(cleanedText);
+            cleanedTextLines = (List<string>)StringUtils.RemoveBlankLines(cleanedTextLines);
             // Remove (Hidden) mod lines.
-            return ((List<string>)cleanedTextLines).FindAll(x => !x.Contains("(Hidden)"));
+            return cleanedTextLines.FindAll(x => !x.Contains("(Hidden)"));
         }
     }
 }

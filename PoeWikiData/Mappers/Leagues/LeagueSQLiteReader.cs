@@ -15,9 +15,7 @@ namespace PoeWikiData.Mappers.Leagues
                     Id = (uint)pReader.GetInt32(0),
                     Name = pReader.GetString(1),
                     DisplayName = pReader.GetString(2),
-                    ReleaseVersionMajor = (uint)pReader.GetInt32(3),
-                    ReleaseVersionMinor = (uint)pReader.GetInt32(4),
-                    ReleaseVersionPatch = (uint)pReader.GetInt32(5)
+                    ReleaseVersion = new(pReader.GetString(3), pReader.GetString(4), pReader.GetString(5))
                 };
                 models.Add(model);
             }

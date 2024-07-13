@@ -124,5 +124,31 @@ namespace Poedle.Server.ByAttr
         //    return Math.Abs(guess - actual) <= 20 ? ResultStates.PARTIAL : ResultStates.WRONG;
         //}
         //#endregion
+
+
+
+        // Operations Needed:
+        //  Answer Model (string Name (for display purposes only), int Id (should be the internal id))
+        //  - Get All Available Answers as List - /X/AllAnswers
+        //  - Get a Random Answer (the Correct Answer) - /X/RandomAnswer
+        //  - Get Hints Associated With an Answer - /X/{id}/Hints
+        //  - For Attr only: Get Attribute Results given a Guessed Answer and Correct Answer - /X/Results/{guess id}/{answer id}
+        //  - Post Score to Db - /Score/Post
+        //  - Calculate Statistics and Return It (Statistics are what?) - /Score/Stats
+
+        // Need a middleware manager that is a singleton that interfaces with the db and implements those operations
+        //  - Needs a game state for each game type
+        //  - Needs a game state controller (not to be confused with the api controllers) for each game state to manipulate it
+        //  - Needs db access via db manager
+        
+        //  Game State Model
+        //  - Needs to store game data like settings
+        //  - Game state will be stored, one per game type, in the middleware manager
+        //  - Use Hints or not
+        //  - Difficulty Mode
+        //  - Score & Stats
+        //  - Previous answer?
+
+        // Controllers will just be api endpoints for the UI to call for processing. It will not hold any state data, and will instead defer to the manager for that.
     }
 }

@@ -60,9 +60,9 @@
                         "LeagueId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
                         "Name TEXT COLLATE NOCASE NOT NULL",
                         "DisplayName TEXT COLLATE NOCASE NOT NULL",
-                        "ReleaseVersionMajor INTEGER NOT NULL",
-                        "ReleaseVersionMinor INTEGER NOT NULL",
-                        "ReleaseVersionPatch INTEGER NOT NULL"
+                        "ReleaseVersionMajor TEXT COLLATE NOCASE NOT NULL",
+                        "ReleaseVersionMinor TEXT COLLATE NOCASE NOT NULL",
+                        "ReleaseVersionPatch TEXT COLLATE NOCASE NOT NULL"
                     ]
                 }
             },
