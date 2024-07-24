@@ -1,4 +1,5 @@
 ﻿using PoeWikiData.Models.LookUps;
+using System.Reflection;
 
 namespace PoeWikiData.Models.StaticData
 {
@@ -11,9 +12,14 @@ namespace PoeWikiData.Models.StaticData
         private readonly Dictionary<uint, StaticDataDbModel> _idLookUp = [];
         private readonly Dictionary<string, StaticDataDbModel> _nameLookUp = [];
 
-        public override IList<StaticDataDbModel> GetAll()
+        public override IList<StaticDataDbModel> GetAll(bool pIsSorted)
         {
-            return [.. _idLookUp.Values];
+            List<StaticDataDbModel> models = [.. _idLookUp.Values];
+            if (pIsSorted)
+            {
+                models.Sort();
+            }
+            return models;
         }
 
         public StaticDataDbModel? GetById(uint pId)

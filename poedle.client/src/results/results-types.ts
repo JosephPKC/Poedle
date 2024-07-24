@@ -1,35 +1,38 @@
-import { AttrItem, NameItem } from "../shared/types/item.ts";
-
 export enum ResultType {
     Correct = 0,
     Partial = 1,
     Wrong = 2
 }
 
-interface AttrResult {
-    readonly name: ResultType,
-    readonly itemClass: ResultType,
-    readonly baseItem: ResultType,
-    readonly leaguesIntroduced: ResultType,
-    readonly itemAspects: ResultType,
-    readonly dropSources: ResultType,
-    readonly dropSourcesSpecific: ResultType,
-    readonly reqLvl: ResultType,
-    readonly reqDex: ResultType,
-    readonly reqInt: ResultType,
-    readonly reqStr: ResultType
+export interface AttrResult {
+    readonly id: number,
+    readonly name: string,
+    readonly itemClass: string,
+    readonly baseItem: string,
+    readonly leaguesIntroduced: string,
+    readonly itemAspects: string,
+    readonly dropSources: string,
+    readonly dropTypes: string,
+    readonly reqLvl: string,
+    readonly reqDex: string,
+    readonly reqInt: string,
+    readonly reqStr: string
+
+    readonly nameResult: ResultType,
+    readonly itemClassResult: ResultType,
+    readonly baseItemResult: ResultType,
+    readonly leaguesIntroducedResult: ResultType,
+    readonly itemAspectsResult: ResultType,
+    readonly dropSourcesResult: ResultType,
+    readonly dropTypesResult: ResultType,
+    readonly reqLvlResult: ResultType,
+    readonly reqDexResult: ResultType,
+    readonly reqIntResult: ResultType,
+    readonly reqStrResult: ResultType
 }
 
-export interface AttrGuessResult {
-    readonly attributes: AttrItem,
-    readonly results: AttrResult
-}
-
-interface NameResult {
-    readonly name: ResultType
-}
-
-export interface NameGuessResult {
-    readonly attributes: NameItem,
-    readonly results: NameResult
+export interface NameResult {
+    readonly id: number,
+    readonly name: string
+    readonly nameResult: ResultType
 }

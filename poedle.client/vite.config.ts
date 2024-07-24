@@ -43,7 +43,7 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/poedle': {
+            '^/Poedle': {
                 target,
                 secure: false
             }

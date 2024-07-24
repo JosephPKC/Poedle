@@ -1,5 +1,4 @@
 ﻿using System.Data.SQLite;
-using System.Security.Cryptography;
 using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi;
@@ -17,7 +16,6 @@ namespace PoeWikiData
 
         private readonly SQLiteConnection _sqlite;
         private readonly CacheHandler<string, IEnumerable<BaseDbModel>> _cache;
-        private readonly ConsoleLogger _log;
         private readonly PoeWikiManager _api ;
 
         private readonly LeagueDbEndpoint _league;
@@ -26,7 +24,6 @@ namespace PoeWikiData
         public PoeDbManager(string pDbFilePath, bool pIsNewDb, ConsoleLogger pLog)
         {
             _sqlite = new($"Data Source={pDbFilePath};New={pIsNewDb};");
-            _log = pLog;
             _cache = new(_cacheSizeLimit);
             _api = new(pLog);
             
@@ -41,11 +38,6 @@ namespace PoeWikiData
             _uniqueItem.Update(_api, _league.SelectAll());
         }
 
-        public void ClearMetaData()
-        {
-
-        }
-
         public TModel? GetById<TModel>(uint pId) where TModel : BaseDbModel
         {
             return typeof(TModel) switch
@@ -56,12 +48,12 @@ namespace PoeWikiData
             };
         }
 
-        public IEnumerable<TModel> GetAll<TModel>() where TModel : BaseDbModel
+        public IEnumerable<TModel> GetAll<TModel>(bool pIsSorted) where TModel : BaseDbModel
         {
             return typeof(TModel) switch
             {
-                Type model when model == typeof(LeagueDbModel) => _league.SelectAll().GetAll() as IEnumerable<TModel> ?? [],
-                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.SelectAll(_league.SelectAll()).GetAll() as IEnumerable<TModel> ?? [],
+                Type model when model == typeof(LeagueDbModel) => _league.SelectAll().GetAll(pIsSorted) as IEnumerable<TModel> ?? [],
+                Type model when model == typeof(UniqueItemDbModel) => _uniqueItem.SelectAll(_league.SelectAll()).GetAll(pIsSorted) as IEnumerable<TModel> ?? [],
                 _ => []
             };
         }

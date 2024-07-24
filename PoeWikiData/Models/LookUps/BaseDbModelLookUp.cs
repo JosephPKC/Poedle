@@ -1,6 +1,6 @@
 ﻿namespace PoeWikiData.Models.LookUps
 {
-    internal abstract class BaseDbModelLookUp<TDbModel> where TDbModel : BaseDbModel
+    public abstract class BaseDbModelLookUp<TDbModel> where TDbModel : BaseDbModel
     {
         public BaseDbModelLookUp(IEnumerable<TDbModel> pModels)
         {
@@ -10,7 +10,7 @@
             }
         }
 
-        public abstract IEnumerable<TDbModel> GetAll();
+        public abstract IEnumerable<TDbModel> GetAll(bool pIsSorted);
         protected abstract void ProcessModel(TDbModel pModel);
 
         protected static TDbModel? GetModel<TKey>(IDictionary<TKey, TDbModel> pLookUp, TKey pKey) where TKey : notnull

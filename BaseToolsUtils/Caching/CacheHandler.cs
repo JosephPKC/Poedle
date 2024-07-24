@@ -11,6 +11,7 @@ namespace BaseToolsUtils.Caching
 
         public CacheHandler()
         {
+            Console.WriteLine("New Cache.");
             _cache = new(new MemoryCacheOptions() { SizeLimit = 1024 });
             AbsExpInSecDefault = 1;
             SlidingExpInSecDefault = 1;
@@ -53,6 +54,7 @@ namespace BaseToolsUtils.Caching
 
         public void Dispose()
         {
+            Console.WriteLine("Disposing cache.");
             _cache.Dispose();
             GC.SuppressFinalize(this);
         }

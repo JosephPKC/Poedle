@@ -2,14 +2,19 @@
 
 namespace PoeWikiData.Models.UniqueItems
 {
-    internal class UniqueItemDbLookUp(IEnumerable<UniqueItemDbModel> pModels) : BaseDbModelListLookUp<UniqueItemDbModel>(pModels), IModelIdLookUp<UniqueItemDbModel>, IModelNameListLookUp<UniqueItemDbModel>
+    public class UniqueItemDbLookUp(IEnumerable<UniqueItemDbModel> pModels) : BaseDbModelListLookUp<UniqueItemDbModel>(pModels), IModelIdLookUp<UniqueItemDbModel>, IModelNameListLookUp<UniqueItemDbModel>
     {
         private readonly Dictionary<uint, UniqueItemDbModel> _idLookUp = [];
         private readonly Dictionary<string, IList<UniqueItemDbModel>> _nameLookUp = [];
 
-        public override IList<UniqueItemDbModel> GetAll()
+        public override IList<UniqueItemDbModel> GetAll(bool pIsSorted)
         {
-            return [.. _idLookUp.Values];
+            List<UniqueItemDbModel> models = [.. _idLookUp.Values];
+            if (pIsSorted)
+            {
+                models.Sort();
+            }
+            return models;
         }
 
         public UniqueItemDbModel? GetById(uint pId)

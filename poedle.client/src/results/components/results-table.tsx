@@ -2,11 +2,11 @@
 import { ResultsTableHeader } from "./results-table-header.tsx";
 import { AttrResultsTableData, NameResultsTableData } from "./results-table-data.tsx";
 // Utils
-import { AttrGuessResult, NameGuessResult } from "../results-types.ts";
+import { AttrResult, NameResult } from "../results-types.ts";
 
 interface AttrResultsTableProps {
     headers: string[],
-    results: AttrGuessResult[]
+    results: AttrResult[]
 }
 export function AttrResultsTable({ headers, results }: AttrResultsTableProps) {
     return (
@@ -19,7 +19,7 @@ export function AttrResultsTable({ headers, results }: AttrResultsTableProps) {
 
 interface NameResultsTableProps {
     headers: string[],
-    results: NameGuessResult[]
+    results: NameResult[]
 }
 
 export function NameResultsTable({ headers, results }: NameResultsTableProps) {

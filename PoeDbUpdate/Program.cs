@@ -15,10 +15,10 @@ namespace PoeDbUpdate
                 Console.WriteLine("No args found. Please put either Update, Reset, or Help.");
                 return;
             }
-
             ConsoleLogger log = new(new ConsoleWriter());
             PoeDbManager db;
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"PoeDb.db");
+            string filePath = @"..\..\..\..\DbData\PoeDb.db";
+            Console.WriteLine($"FILE PATH: {filePath}");
             string cmd = pArgs[0];
             switch (cmd.ToUpper())
             {
@@ -27,13 +27,6 @@ namespace PoeDbUpdate
                     Console.WriteLine($"Updating Db Values for {filePath}");
                     db = new(filePath, true, log);
                     db.ResetData();
-                    Console.WriteLine("Done!");
-                    break;
-                case "R":
-                case "RESET":
-                    Console.WriteLine($"Resetting Meta Data for {filePath}");
-                    db = new(filePath, false, log);
-                    db.ClearMetaData();
                     Console.WriteLine("Done!");
                     break;
                 case "H":
@@ -63,7 +56,7 @@ namespace PoeDbUpdate
             LeagueDbModel? league = pDb.GetById<LeagueDbModel>(619);
             Console.WriteLine($"TEST: GOT LEAGUE: {league?.Name}.");
             UniqueItemDbModel? unique = pDb.GetById<UniqueItemDbModel>(37106);
-            IEnumerable<UniqueItemDbModel> uniques = pDb.GetAll<UniqueItemDbModel>();
+            IEnumerable<UniqueItemDbModel> uniques = pDb.GetAll<UniqueItemDbModel>(false);
             Console.WriteLine($"TEST: GOT UNIQUES COUNT: {uniques.Count()}.");
             foreach (var u in uniques)
             {

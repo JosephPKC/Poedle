@@ -1,5 +1,7 @@
-﻿using PoeWikiApi.Models;
+﻿using System.Text.RegularExpressions;
+using PoeWikiApi.Models;
 using PoeWikiData.Mappers.StaticData;
+using PoeWikiData.Models.Common;
 using PoeWikiData.Models.Leagues;
 using PoeWikiData.Models.StaticData;
 using PoeWikiData.Models.StaticData.Enums;
@@ -31,6 +33,13 @@ namespace PoeWikiData.Mappers.UniqueItems
                 ImplicitStatText = GetStatTexts(pModel.ImplicitStatText),
                 ExplicitStatText = GetStatTexts(pModel.ExplicitStatText)
             };
+        }
+
+        private static string GetHint(UniqueItemWikiModel pModel)
+        {
+            // WordLetters is essentially like the hangmand letters of the word, along with spaces and dashes.
+            string wordLetters = Regex.Replace(pModel.Name.Replace(" ", "   "), @"\w", "_ ");
+            return pModel.Name.ToUpper().First() + wordLetters[1..^1] + pModel.Name.ToUpper().Last();
         }
 
         private static StaticDataDbModel GetItemClass(string pItemClass)

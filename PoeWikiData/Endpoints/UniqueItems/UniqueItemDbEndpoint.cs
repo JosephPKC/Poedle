@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi;
@@ -9,7 +8,6 @@ using PoeWikiData.Mappers.UniqueItems;
 using PoeWikiData.Models;
 using PoeWikiData.Models.Leagues;
 using PoeWikiData.Models.Links;
-using PoeWikiData.Models.LookUps;
 using PoeWikiData.Models.StaticData;
 using PoeWikiData.Models.UniqueItems;
 using PoeWikiData.Schema;

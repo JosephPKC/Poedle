@@ -89,7 +89,14 @@ namespace PoeWikiData.Endpoints
         protected void Reset(PoeDbSchemaTypes pSchemaType)
         {
             PoeDbSchema schema = PoeDbSchemaManager.GetSchema(pSchemaType);
-            Drop(schema.Table);
+            try
+            {
+                Drop(schema.Table);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Table {schema.Table} not found.");
+            }
             Create(schema.Table, schema.Columns);
         }
         #endregion
@@ -260,7 +267,7 @@ namespace PoeWikiData.Endpoints
             }
 
             Stopwatch timer = new();
-            _log.TimeStartLog(timer, $"BEGIN: {pQuery}");
+            _log.TimeStartLog(timer, $"BEGIN: {pQuery}", LogLevel.VERBOSE);
 
             if (_cache.Get(pQuery) is IEnumerable<TDbModel> modelFromCache)
             {
@@ -281,7 +288,7 @@ namespace PoeWikiData.Endpoints
             }
 
             _cache.Set(pQuery, model as IEnumerable<BaseDbModel> ?? []);
-            _log.TimeStopLogAndAppend(timer, $"END: {pQuery}");
+            _log.TimeStopLogAndAppend(timer, $"END: {pQuery}", LogLevel.VERBOSE);
 
             return model;
         }

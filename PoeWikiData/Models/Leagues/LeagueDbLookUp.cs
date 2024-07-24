@@ -1,5 +1,6 @@
 ﻿using PoeWikiData.Models.Common;
 using PoeWikiData.Models.LookUps;
+using System.Reflection;
 
 namespace PoeWikiData.Models.Leagues
 {
@@ -9,9 +10,14 @@ namespace PoeWikiData.Models.Leagues
         private readonly Dictionary<string, LeagueDbModel> _nameLookUp = [];
         private readonly Dictionary<string, IList<LeagueDbModel>> _versionLookUp = [];
 
-        public override IList<LeagueDbModel> GetAll()
+        public override IList<LeagueDbModel> GetAll(bool pIsSorted)
         {
-            return [.. _idLookUp.Values];
+            List<LeagueDbModel> models = [.. _idLookUp.Values];
+            if (pIsSorted)
+            {
+                models.Sort();
+            }
+            return models;
         }
 
         public LeagueDbModel? GetById(uint pId)

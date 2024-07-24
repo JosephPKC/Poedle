@@ -3,54 +3,54 @@
     internal class PoeDbSchemaMasterRef
     {
         public static Dictionary<PoeDbSchemaTypes, PoeDbSchema> SchemaList { get; set; } = new() {
-            //{
-            //    PoeDbSchemaTypes.DropSources, new PoeDbSchema()
-            //    {
-            //        Table = "DropSources",
-            //        Columns =
-            //        [
-            //            "DropSourceId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-            //            "Name TEXT COLLATE NOCASE NOT NULL",
-            //            "DisplayName TEXT COLLATE NOCASE NOT NULL"
-            //        ]
-            //    }
-            //},
-            //{
-            //    PoeDbSchemaTypes.DropTypes, new PoeDbSchema()
-            //    {
-            //        Table = "DropTypes",
-            //        Columns =
-            //        [
-            //            "DropTypeId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-            //            "Name TEXT COLLATE NOCASE NOT NULL",
-            //            "DisplayName TEXT COLLATE NOCASE NOT NULL"
-            //        ]
-            //    }
-            //},
-            //{
-            //    PoeDbSchemaTypes.ItemAspects, new PoeDbSchema()
-            //    {
-            //        Table = "ItemAspects",
-            //        Columns =
-            //        [
-            //            "ItemAspectId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-            //            "Name TEXT COLLATE NOCASE NOT NULL",
-            //            "DisplayName TEXT COLLATE NOCASE NOT NULL"
-            //        ]
-            //    }
-            //},
-            //{
-            //    PoeDbSchemaTypes.ItemClasses, new PoeDbSchema()
-            //    {
-            //        Table = "ItemClasses",
-            //        Columns =
-            //        [
-            //            "ItemClassId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
-            //            "Name TEXT COLLATE NOCASE NOT NULL",
-            //            "DisplayName TEXT COLLATE NOCASE NOT NULL"
-            //        ]
-            //    }
-            //},
+            {
+                PoeDbSchemaTypes.DropSources, new PoeDbSchema()
+                {
+                    Table = "DropSources",
+                    Columns =
+                    [
+                        "DropSourceId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL"
+                    ]
+                }
+            },
+            {
+                PoeDbSchemaTypes.DropTypes, new PoeDbSchema()
+                {
+                    Table = "DropTypes",
+                    Columns =
+                    [
+                        "DropTypeId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL"
+                    ]
+                }
+            },
+            {
+                PoeDbSchemaTypes.ItemAspects, new PoeDbSchema()
+                {
+                    Table = "ItemAspects",
+                    Columns =
+                    [
+                        "ItemAspectId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL"
+                    ]
+                }
+            },
+            {
+                PoeDbSchemaTypes.ItemClasses, new PoeDbSchema()
+                {
+                    Table = "ItemClasses",
+                    Columns =
+                    [
+                        "ItemClassId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL"
+                    ]
+                }
+            },
             {
                 PoeDbSchemaTypes.Leagues,  new PoeDbSchema()
                 {
