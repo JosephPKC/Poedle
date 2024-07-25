@@ -70,14 +70,29 @@ namespace Poedle.Server
             return _gameStates[pGameType].ProcessResult(pGuessId);
         }
 
-        //public IEnumerable<BaseResult> GetAllGuessResults(GameTypes pGameType)
-        //{
-        //    return _gameStates[pGameType].GetAllGuessResults();
-        //}
+        public IEnumerable<BaseResult> GetAllGuessResults(GameTypes pGameType)
+        {
+            return _gameStates[pGameType].GetAllGuessResults();
+        }
 
         public void UpdateScore(GameTypes pGameType, int pScore)
         {
             _gameStates[pGameType].UpdateScore(pScore);
+        }
+
+        public void UpdateScore(GameTypes pGameType)
+        {
+            _gameStates[pGameType].UpdateScore();
+        }
+
+        public int GetScore(GameTypes pGameType)
+        {
+            return _gameStates[pGameType].GetScore();
+        }
+
+        public string GetHint(GameTypes pGameType)
+        {
+            return _gameStates[pGameType].GetHint();
         }
 
         public StatsModel GetStats(GameTypes pGameType)
@@ -88,6 +103,17 @@ namespace Poedle.Server
         public void SetGame(GameTypes pGameType)
         {
             _gameStates[pGameType].SetGame();
+        }
+
+        public bool SetIsWin(GameTypes pGameType, uint pGuessId)
+        {
+            _gameStates[pGameType].SetIsWin(pGuessId);
+            return IsWin(pGameType);
+        }
+
+        public bool IsWin(GameTypes pGameType)
+        {
+            return _gameStates[pGameType].IsWin();
         }
     }
 }

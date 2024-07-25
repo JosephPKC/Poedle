@@ -2,6 +2,7 @@
 {
     public class StatsModel
     {
+        public string Score { get; set; } = string.Empty;
         // The single (or multiple if there is a tie) answer that had the highest or lowest scores.
         public string BestScore { get; set; } = string.Empty;
         public string BestAnswers { get; set; } = string.Empty;

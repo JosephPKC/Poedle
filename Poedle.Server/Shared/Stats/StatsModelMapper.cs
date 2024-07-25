@@ -21,6 +21,7 @@ namespace Poedle.Server.Shared.Stats
 
             return new()
             {
+                Score = pScores.Last().Score.ToString(),
                 BestScore = bestAnswers.Stat.ToString(),
                 BestAnswers = string.Join(", ", bestAnswers.Answers),
                 WorstScore = worstAnswers.Stat.ToString(),

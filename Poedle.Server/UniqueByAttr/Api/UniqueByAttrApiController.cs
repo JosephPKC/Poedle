@@ -29,7 +29,7 @@ namespace Poedle.Server.UniqueByAttr.Api
         }
 
         [HttpGet("CorrectAnswer")]
-        public LiteAnswerModel GetCorrectAnswer()
+        public FullAnswerModel GetCorrectAnswer()
         {
             Stopwatch timer = new();
             _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueUniqueByAttrItems/CorrectAnswer");
@@ -39,22 +39,22 @@ namespace Poedle.Server.UniqueByAttr.Api
             Console.WriteLine($"Answer: {liteAnswer.Label}");
             _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/CorrectAnswer");
 
-            return liteAnswer;
+            return chosenAnswer;
         }
 
-        //[HttpGet("Hints")]
-        //public string GetHints()
-        //{
-        //    Stopwatch timer = new();
-        //    _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/Hints");
+        [HttpGet("Hints")]
+        public string GetHints()
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/Hints");
 
-        //    FullAnswerModel chosenAnswer = GameManager.Instance.GetChosenAnswer(GameManager.GameTypes.UniqueByAttr);
-        //    Console.WriteLine($"Hint: {chosenAnswer.Hints}");
+            string hint = GameManager.Instance.GetHint(GameManager.GameTypes.UniqueByAttr);
+            Console.WriteLine($"Hint: {hint}");
 
-        //    _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/Hints");
+            _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/Hints");
 
-        //    return chosenAnswer.Hints;
-        //}
+            return hint;
+        }
 
         [HttpPost("Guess/{guessId:int}")]
         public UniqueByAttrResult ProcessResult(int guessId)
@@ -69,28 +69,52 @@ namespace Poedle.Server.UniqueByAttr.Api
             return result;
         }
 
-        //[HttpGet("Guess/AllResults")]
-        //public IEnumerable<UniqueByAttrResult> GetAllResults()
-        //{
-        //    Stopwatch timer = new();
-        //    _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/Guess/AllResults");
-
-        //    IEnumerable<UniqueByAttrResult> result = (IEnumerable<UniqueByAttrResult>)GameManager.Instance.GetAllGuessResults(GameManager.GameTypes.UniqueByAttr);
-
-        //    _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/Guess/AllResults");
-
-        //    return result;
-        //}
-
-        [HttpPost("Score/Update/{score:int}")]
-        public void UpdateScore(int score)
+        [HttpGet("Guess/AllResults")]
+        public IEnumerable<UniqueByAttrResult> GetAllResults()
         {
             Stopwatch timer = new();
-            _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Score/Update/{score}");
+            _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/Guess/AllResults");
 
-            GameManager.Instance.UpdateScore(GameManager.GameTypes.UniqueByAttr, score);
+            IEnumerable<UniqueByAttrResult> result = (IEnumerable<UniqueByAttrResult>)GameManager.Instance.GetAllGuessResults(GameManager.GameTypes.UniqueByAttr);
 
-            _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Score/Update/{score}");
+            _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/Guess/AllResults");
+
+            return result;
+        }
+
+        //[HttpPost("Score/Update/{score:int}")]
+        //public void UpdateScore(int score)
+        //{
+        //    Stopwatch timer = new();
+        //    _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Score/Update/{score}");
+
+        //    GameManager.Instance.UpdateScore(GameManager.GameTypes.UniqueByAttr, score);
+
+        //    _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Score/Update/{score}");
+        //}
+
+        [HttpPost("Score/Update")]
+        public void UpdateScore()
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Score/Update");
+
+            GameManager.Instance.UpdateScore(GameManager.GameTypes.UniqueByAttr);
+
+            _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Score/Update");
+        }
+
+        [HttpGet("Score")]
+        public int GetScore()
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Score");
+
+            int score = GameManager.Instance.GetScore(GameManager.GameTypes.UniqueByAttr);
+
+            _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Score");
+
+            return score;
         }
 
         [HttpGet("Score/Stats")]
@@ -111,15 +135,41 @@ namespace Poedle.Server.UniqueByAttr.Api
             return stats;
         }
 
-        [HttpPost("SetGame")]
+        [HttpPost("Game/Set")]
         public void SetGame()
         {
             Stopwatch timer = new();
-            _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/SetGame");
+            _log.TimeStartLog(timer, "BEGIN: /Poedle/UniqueByAttr/Game/Set");
 
             GameManager.Instance.SetGame(GameManager.GameTypes.UniqueByAttr);
 
-            _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/SetGame");
+            _log.TimeStopLogAndAppend(timer, "END: /Poedle/UniqueByAttr/Game/Set");
+        }
+
+        [HttpPost("Game/SetIsWin/{guessId:int}")]
+        public bool SetIsWin(int guessId)
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Game/SetIsWin/{guessId}");
+
+            bool isWin = GameManager.Instance.SetIsWin(GameManager.GameTypes.UniqueByAttr, (uint)guessId);
+
+            _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Game/SetIsWin/{guessId}");
+
+            return isWin;
+        }
+
+        [HttpGet("Game/IsWin")]
+        public bool IsWin()
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: /Poedle/UniqueByAttr/Game/IsWin");
+
+            bool isWin = GameManager.Instance.IsWin(GameManager.GameTypes.UniqueByAttr);
+
+            _log.TimeStopLogAndAppend(timer, $"END: /Poedle/UniqueByAttr/Game/IsWin");
+            Console.WriteLine("Is WIn: " + isWin);
+            return isWin;
         }
     }
 }

@@ -12,10 +12,15 @@ namespace Poedle.Server.Shared.State
         public abstract IEnumerable<LiteAnswerModel> GetAllAvailableAnswers();
         public abstract FullAnswerModel GetChosenAnswer();
         public abstract BaseResult ProcessResult(uint pGuessId);
-        //public abstract IEnumerable<BaseResult> GetAllGuessResults();
+        public abstract IEnumerable<BaseResult> GetAllGuessResults();
         public abstract void UpdateScore(int pScore);
+        public abstract void UpdateScore();
+        public abstract int GetScore();
+        public abstract string GetHint();
         public abstract StatsModel GetStats();
         public abstract void SetGame();
+        public abstract bool SetIsWin(uint pGuessId);
+        public abstract bool IsWin();
 
         protected virtual uint ChooseRandomAnswer()
         {

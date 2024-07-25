@@ -1,4 +1,5 @@
 export interface Stats {
+    readonly score: number,
     readonly totalGames: number,
     readonly bestScore: number,
     readonly bestAnswers: string,
