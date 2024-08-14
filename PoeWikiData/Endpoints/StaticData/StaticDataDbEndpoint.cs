@@ -1,85 +1,55 @@
-﻿using PoeWikiData.Models.StaticData;
+﻿using System.Data.SQLite;
+using System.Diagnostics;
+using BaseToolsUtils.Caching;
+using BaseToolsUtils.Logging;
+using PoeWikiApi;
+using PoeWikiData.Mappers.StaticData;
+using PoeWikiData.Models;
+using PoeWikiData.Models.StaticData;
 using PoeWikiData.Schema;
 
 namespace PoeWikiData.Endpoints.StaticData
 {
-    internal class StaticDataDbEndpoint
+    internal class StaticDataDbEndpoint(SQLiteConnection pSQLite, CacheHandler<string, IEnumerable<BaseDbModel>> pCache, ConsoleLogger pLog) : BaseDbEndpoint(pSQLite, pCache, pLog)
     {
-        //public void UpdateDropSources()
-        //{
-        //    UpdateStaticData("Drop Sources", PoeDbSchemaTypes.DropSources, Enum.GetValues<DropSources>());
-        //}
+        public void Update(PoeWikiManager pApi)
+        {
+            FullUpdateStaticData("Drop Sources", PoeDbSchemaTypes.DropSources, null, StaticDataMasterRef.DropSources, StaticDataSQLiteMapper.Map);
+            FullUpdateStaticData("Drop Types", PoeDbSchemaTypes.DropTypes, null, StaticDataMasterRef.DropTypes, StaticDataSQLiteMapper.Map);
+            FullUpdateStaticData("Item Aspects", PoeDbSchemaTypes.ItemAspects, null, StaticDataMasterRef.ItemAspects, StaticDataSQLiteMapper.Map);
+            FullUpdateStaticData("Item Classes", PoeDbSchemaTypes.ItemClasses, null, StaticDataMasterRef.ItemClasses, StaticDataSQLiteMapper.Map);
+        }
 
-        //public void UpdateDropTypes()
-        //{
-        //    UpdateStaticData("Drop Types", PoeDbSchemaTypes.DropTypes, Enum.GetValues<DropTypes>());
-        //}
+        protected void FullUpdateStaticData(string pOperationName, PoeDbSchemaTypes pSchemaType, IEnumerable<string>? pSpecifiedColumns, StaticDataDbLookUp pAllStaticData, Func<StaticDataDbModel, SQLiteValues?> pGeSQLValues)
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: UPDATE {pOperationName}");
 
-        //public void UpdateItemAspects()
-        //{
-        //    UpdateStaticData("Item Aspects", PoeDbSchemaTypes.ItemAspects, Enum.GetValues<ItemAspects>());
-        //}
+            Reset(pSchemaType);
 
-        //public void UpdateItemClasses()
-        //{
-        //    UpdateStaticData("Item Classes", PoeDbSchemaTypes.ItemClasses, Enum.GetValues<ItemClasses>());
-        //}
+            InsertDataFromApiStaticData(pSchemaType, pSpecifiedColumns, pAllStaticData, pGeSQLValues);
 
-        //private void UpdateStaticData<T>(string pOperationName, PoeDbSchemaTypes pSchemaType, T[] pAllEnumValues, bool pIsForceUpdate = false) where T : Enum
-        //{
-        //    Stopwatch timer = new();
-        //    _log.TimeStartLog(timer, $"BEGIN: UPDATE {pOperationName}");
+            _log.TimeStopLogAndAppend(timer, $"END: UPDATE {pOperationName}");
+        }
 
-        //    if (pAllEnumValues.Length == 0)
-        //    {
-        //        string toDo = pIsForceUpdate ? "Forcefully updating (table will be empty)." : "Skipping.";
-        //        _log.Log($"Enum of type {typeof(T).Name} has no values given. {toDo}");
-        //        if (!pIsForceUpdate)
-        //        {
-        //            _log.TimeStopLogAndAppend(timer, $"END: SKIPPED UPDATE {pOperationName}");
-        //            return;
-        //        }
-        //    }
+        protected void InsertDataFromApiStaticData(PoeDbSchemaTypes pSchemaType, IEnumerable<string>? pSpecifiedColumns, StaticDataDbLookUp pAllStaticData, Func<StaticDataDbModel, SQLiteValues?> pGetSQLValues)
+        {
+            PoeDbSchema schema = PoeDbSchemaManager.GetSchema(pSchemaType);
+            foreach (StaticDataDbModel staticData in pAllStaticData.GetAll(false))
+            {
+                Stopwatch timer = new();
+                _log.TimeStartLog(timer, $"BEGIN: UPDATE DATA {staticData.Id}: {staticData.Name}");
 
-        //    ResetTable(pSchemaType);
-        //    InsertAllStaticData(pSchemaType, pAllEnumValues);
+                SQLiteValues? sqlData = pGetSQLValues(staticData);
+                if (sqlData == null)
+                {
+                    _log.Log($"There was an issue getting the SQL values for model {staticData}.", LogLevel.ERROR);
+                    continue;
+                }
+                Insert(schema.Table, pSpecifiedColumns, sqlData);
 
-        //    _log.TimeStopLogAndAppend(timer, $"END: UPDATE {pOperationName}");
-        //}
-
-        //private void InsertAllStaticData<T>(PoeDbSchemaTypes pSchemaType, T[] pAllEnumValues) where T : Enum
-        //{
-        //    List<SQLiteValues> allSQLValues = [];
-        //    foreach (T enumVal in pAllEnumValues)
-        //    {
-        //        StaticDataDbModel model = new(BaseUtils.GetEnumValue(enumVal), enumVal.ToString());
-        //        SQLiteValues values = StaticDataSQLiteMapper.Map(model);
-        //        allSQLValues.Add(values);
-        //    }
-
-        //    PoeDbSchema schema = PoeDbSchemaList.SchemaList[pSchemaType];
-        //    _db.InsertAllIntoTable(schema.TableName, null, allSQLValues);
-        //}
-
-        //public StaticDataDbLookUp SelectAllDropSources()
-        //{
-        //    return _db.SelectStaticData(PoeDbSchemaList.SchemaList[PoeDbSchemaTypes.DropSources].TableName);
-        //}
-
-        //public StaticDataDbLookUp SelectAllDropTypes()
-        //{
-
-        //    return _db.SelectStaticData(PoeDbSchemaList.SchemaList[PoeDbSchemaTypes.DropTypes].TableName);
-        //}
-
-        //public StaticDataDbLookUp SelectAllItemAspects()
-        //{
-        //    return _db.SelectStaticData(PoeDbSchemaList.SchemaList[PoeDbSchemaTypes.ItemAspects].TableName);
-        //}
-
-        //public StaticDataDbLookUp SelectAllItemClasses()
-        //{
-        //    return _db.SelectStaticData(PoeDbSchemaList.SchemaList[PoeDbSchemaTypes.ItemClasses].TableName);
-        //}
+                _log.TimeStartLog(timer, $"END: UPDATE DATA {staticData.Id}: {staticData.Name}");
+            }
+        }
     }
 }

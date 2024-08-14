@@ -103,7 +103,7 @@ namespace PoeWikiData.Endpoints
 
         #region "Insert"
         protected void InsertDataFromApi<TDbModel, TWikiModel>(PoeDbSchemaTypes pSchemaType, IEnumerable<string>? pSpecifiedColumns, IEnumerable<TWikiModel> pAllApiData, 
-            Func<TWikiModel, TDbModel?> pGetDbModel, Func<TDbModel, SQLiteValues?> pGeSQLValues, Action<TDbModel>? pUpdateLinks) 
+            Func<TWikiModel, TDbModel?> pGetDbModel, Func<TDbModel, SQLiteValues?> pGetSQLValues, Action<TDbModel>? pUpdateLinks) 
             where TDbModel : BaseDbModel where TWikiModel : BaseWikiModel
         {
             PoeDbSchema schema = PoeDbSchemaManager.GetSchema(pSchemaType);
@@ -119,7 +119,7 @@ namespace PoeWikiData.Endpoints
                     continue;
                 }
 
-                Models.SQLiteValues? sqlData = pGeSQLValues(dbDataModel);
+                Models.SQLiteValues? sqlData = pGetSQLValues(dbDataModel);
                 if (sqlData == null)
                 {
                     _log.Log($"There was an issue getting the SQL values for model {apiData.Name}.", LogLevel.ERROR);
@@ -182,7 +182,7 @@ namespace PoeWikiData.Endpoints
             ExecuteNonQuery(query);
         }
 
-        private void Insert(string pTableName, IEnumerable<string>? pSpecifiedColumns, SQLiteValues pValues)
+        protected void Insert(string pTableName, IEnumerable<string>? pSpecifiedColumns, SQLiteValues pValues)
         {
             ArgumentNullException.ThrowIfNull(pValues);
 

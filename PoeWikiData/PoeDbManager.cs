@@ -3,6 +3,7 @@ using BaseToolsUtils.Caching;
 using BaseToolsUtils.Logging;
 using PoeWikiApi;
 using PoeWikiData.Endpoints.Leagues;
+using PoeWikiData.Endpoints.StaticData;
 using PoeWikiData.Endpoints.UniqueItems;
 using PoeWikiData.Models;
 using PoeWikiData.Models.Leagues;
@@ -18,6 +19,7 @@ namespace PoeWikiData
         private readonly CacheHandler<string, IEnumerable<BaseDbModel>> _cache;
         private readonly PoeWikiManager _api ;
 
+        private readonly StaticDataDbEndpoint _staticData;
         private readonly LeagueDbEndpoint _league;
         private readonly UniqueItemDbEndpoint _uniqueItem;
 
@@ -26,14 +28,15 @@ namespace PoeWikiData
             _sqlite = new($"Data Source={pDbFilePath};New={pIsNewDb};");
             _cache = new(_cacheSizeLimit);
             _api = new(pLog);
-            
 
+            _staticData = new(_sqlite, _cache, pLog);
             _league = new(_sqlite, _cache, pLog);
             _uniqueItem = new(_sqlite, _cache, pLog);
         }
 
         public void ResetData()
         {
+            _staticData.Update(_api);
             _league.Update(_api);
             _uniqueItem.Update(_api, _league.SelectAll());
         }

@@ -48,7 +48,8 @@ namespace PoeWikiData.Mappers.UniqueItems
         /// <returns></returns>
         public static bool IsGrantsSkills(UniqueItemWikiModel pUnique)
         {
-            return StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[Level]]") || StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Grants [[Level]]");
+            return StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[Level]]") || StringUtils.ContainsIgnoreCase(pUnique.ExplicitStatText, "Grants [[Level]]") ||
+                   StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[level]]") || StringUtils.ContainsIgnoreCase(pUnique.ImplicitStatText, "Grants [[level]]");
         }
 
         /// <summary>
