@@ -1,4 +1,4 @@
-import { ResultType } from "../results-types.ts";
+import { ResultType } from "../types/results-type-def.ts";
 
 const correctClassName: string = "td-green";
 const partialClassName: string = "td-orange";

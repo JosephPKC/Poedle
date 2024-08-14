@@ -1,5 +1,6 @@
 Poedle_OLD/
 POEDLE_UI_OLD/
+_OLD/
 *.db
 
 ## Ignore Visual Studio temporary files, build results, and

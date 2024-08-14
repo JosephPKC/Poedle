@@ -55,7 +55,7 @@ namespace PoeDbUpdate
 
             LeagueDbModel? league = pDb.GetById<LeagueDbModel>(619);
             Console.WriteLine($"TEST: GOT LEAGUE: {league?.Name}.");
-            UniqueItemDbModel? unique = pDb.GetById<UniqueItemDbModel>(37106);
+            //UniqueItemDbModel? unique = pDb.GetById<UniqueItemDbModel>(37106);
             IEnumerable<UniqueItemDbModel> uniques = pDb.GetAll<UniqueItemDbModel>(false);
             Console.WriteLine($"TEST: GOT UNIQUES COUNT: {uniques.Count()}.");
             foreach (var u in uniques)

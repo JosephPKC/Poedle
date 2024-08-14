@@ -1,12 +1,11 @@
-// Components
-import { DefaultLoadingText } from "../shared/components/default-loading-text.tsx";
-import { AttrResultsTable, NameResultsTable } from "./components/results-table.tsx";
-// Utils
-import { AttrResultList, NameResultList } from "../shared/types/type-defs.ts";
+import { DefaultLoadingText } from "../shared/comps/default-loading-text.tsx";
+import { AttrResultsTable, NameResultsTable } from "./comps/results-table.tsx";
+
+import { NullableAttrResultList, NullableNameResultList } from "./types/results-type-def.ts";
 
 interface AttrResultsTableProps {
     headers: string[],
-    results: AttrResultList
+    results: NullableAttrResultList
 }
 
 export function AttrResultsArea({ headers, results }: AttrResultsTableProps) {
@@ -19,7 +18,7 @@ export function AttrResultsArea({ headers, results }: AttrResultsTableProps) {
 
 interface NameResultsTableProps {
     headers: string[],
-    results: NameResultList
+    results: NullableNameResultList
 }
 
 export function NameResultsArea({ headers, results }: NameResultsTableProps) {

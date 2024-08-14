@@ -3,8 +3,5 @@ export interface DropDownItem {
     value: number
 }
 
-export interface ChosenDropDownitem {
-    label: string,
-    value: number,
-    hintName: string
-}
+export type NullableDropDownItem = DropDownItem | null;
+export type NullableDropDownItemList = DropDownItem[] | null;
