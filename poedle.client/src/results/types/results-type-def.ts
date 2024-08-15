@@ -8,7 +8,6 @@ export interface AttrResult {
     readonly id: number,
     readonly name: string,
     readonly itemClass: string,
-    readonly baseItem: string,
     readonly leaguesIntroduced: string,
     readonly itemAspects: string,
     readonly dropSources: string,
@@ -20,7 +19,6 @@ export interface AttrResult {
 
     readonly nameResult: ResultType,
     readonly itemClassResult: ResultType,
-    readonly baseItemResult: ResultType,
     readonly leaguesIntroducedResult: ResultType,
     readonly itemAspectsResult: ResultType,
     readonly dropSourcesResult: ResultType,
@@ -31,13 +29,5 @@ export interface AttrResult {
     readonly reqStrResult: ResultType
 }
 
-export interface NameResult {
-    readonly id: number,
-    readonly name: string
-    readonly nameResult: ResultType
-}
-
 export type NullableAttrResult = AttrResult | null;
-export type NullableNameResult = NameResult | null;
 export type NullableAttrResultList = AttrResult[] | null;
-export type NullableNameResultList = NameResult[] | null;

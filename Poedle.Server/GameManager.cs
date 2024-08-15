@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using BaseToolsUtils.Logging;
 using BaseToolsUtils.Logging.Writers;
 using Poedle.Server.Data.Answers;
-using Poedle.Server.States;
+using Poedle.Server.States.UniqueItems;
 using PoeWikiData;
 using PoeWikiData.Models.UniqueItems;
 
@@ -17,7 +17,7 @@ namespace Poedle.Server
         private readonly ConsoleLogger _log;
         private readonly PoeDbManager _db;
 
-        public UniqueByAttrStateController UniqueByAttr { get; private set; }
+        public UniqueItemsStateController UniqueItemsGame { get; private set; }
 
         static GameManager() { }
 
@@ -26,10 +26,10 @@ namespace Poedle.Server
             _log = new(new ConsoleWriter());
             _db = new(Path.Combine(Environment.CurrentDirectory, @"..\DbData", "PoeDb.db"), false, _log);
 
-            UniqueByAttr = GetUniqueByAttrStateController();
+            UniqueItemsGame = GetUniqueByAttrStateController();
         }
 
-        private UniqueByAttrStateController GetUniqueByAttrStateController()
+        private UniqueItemsStateController GetUniqueByAttrStateController()
         {
             Stopwatch timer = new();
             _log.TimeStartLog(timer, $"BEGIN: Get all unique items from db.");
@@ -42,7 +42,7 @@ namespace Poedle.Server
             }
 
             UniqueItemDbLookUp uniqueItemLookUp = new(allModels);
-            UniqueByAttrStateController control = new(uniqueItemLookUp, allAnswers);
+            UniqueItemsStateController control = new(uniqueItemLookUp, allAnswers);
 
             _log.TimeStopLogAndAppend(timer, $"END: Get all unique items from db.");
 

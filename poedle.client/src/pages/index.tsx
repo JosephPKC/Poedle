@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ByAttr } from "./by-attr.tsx";
+import { UniqueItemsGame } from "./unique-items.tsx";
 import { NavBar } from "../shared/comps/nav-bar.tsx";
 
 export function Index() {
@@ -8,7 +8,7 @@ export function Index() {
             <BrowserRouter>
                 <NavBar />
                 <Routes>
-                    <Route path="/by-attr" element={<ByAttr />} />
+                    <Route path="/unique-items" element={<UniqueItemsGame />} />
                 </Routes>
             </BrowserRouter>
         </>

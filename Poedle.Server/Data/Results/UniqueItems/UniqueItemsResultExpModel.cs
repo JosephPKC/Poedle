@@ -1,11 +1,9 @@
-﻿namespace Poedle.Server.Data.Results.UniqueByAttr
+﻿namespace Poedle.Server.Data.Results.UniqueItems
 {
-    public class UniqueByAttrResultExpModel : BaseResultExpModel
+    public class UniqueItemsResultExpModel : BaseResultExpModel
     {
         public string ItemClass { get; set; } = string.Empty;
         public ResultStates ItemClassResult { get; set; }
-        public string BaseItem { get; set; } = string.Empty;
-        public ResultStates BaseItemResult { get; set; }
         public string ReqLvl { get; set; } = string.Empty;
         public ResultStates ReqLvlResult { get; set; }
         public string ReqDex { get; set; } = string.Empty;

@@ -10,7 +10,8 @@ export interface Stats {
     readonly worstXAnswers: string,
     readonly bestWorstXThreshold: number,
     readonly totalAverage: string,
-    readonly averagesPerAnswer: string[]
+    readonly averagesPerAnswer: string[],
+    readonly nbrHintsRemaining: number
 }
 
 export type NullableStats = Stats | null

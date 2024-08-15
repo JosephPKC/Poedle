@@ -1,4 +1,4 @@
-import { AttrResult, NameResult, ResultType } from "../types/results-type-def.ts";
+import { AttrResult, ResultType } from "../types/results-type-def.ts";
 import { getColorClassFromResult } from "../utils/results-table-coloring.ts";
 
 import "../styles/results-table-row.css";
@@ -17,18 +17,17 @@ function ResultsTableRow({ guessResult, text }: ResultsTableRowProps) {
 }
 
 // Table Data
-interface AttrResultsTableDataProps {
+interface ResultsTableDataProps {
     results: AttrResult[]
 }
 
-export function AttrResultsTableData({ results }: AttrResultsTableDataProps) {
+export function ResultsTableData({ results }: ResultsTableDataProps) {
     return (
         <tbody>
             {results.map((r: AttrResult) =>
                 <tr key={r.id}>
                     <ResultsTableRow guessResult={r.nameResult} text={r.name} />
                     <ResultsTableRow guessResult={r.itemClassResult} text={r.itemClass} />
-                    <ResultsTableRow guessResult={r.baseItemResult} text={r.baseItem} />
                     <ResultsTableRow guessResult={r.leaguesIntroducedResult} text={r.leaguesIntroduced} />
                     <ResultsTableRow guessResult={r.itemAspectsResult} text={r.itemAspects} />
                     <ResultsTableRow guessResult={r.dropSourcesResult} text={r.dropSources} />
@@ -37,21 +36,6 @@ export function AttrResultsTableData({ results }: AttrResultsTableDataProps) {
                     <ResultsTableRow guessResult={r.reqDexResult} text={r.reqDex} />
                     <ResultsTableRow guessResult={r.reqIntResult} text={r.reqInt} />
                     <ResultsTableRow guessResult={r.reqStrResult} text={r.reqStr} />
-                </tr>)}
-        </tbody>
-    );
-}
-
-interface NameResultsTableDataProps {
-    results: NameResult[]
-}
-
-export function NameResultsTableData({ results }: NameResultsTableDataProps) {
-    return (
-        <tbody>
-            {results.map((r: NameResult) =>
-                <tr key={r.id}>
-                    <ResultsTableRow guessResult={r.nameResult} text={r.name} />
                 </tr>)}
         </tbody>
     );

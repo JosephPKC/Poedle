@@ -5,7 +5,7 @@ namespace Poedle.Server.Data.Stats
 {
     internal static class StatsMapper
     {
-        public static StatsExpModel GetStats(List<ScoreModel> pScores, ScoreModel pCurrentScore)
+        public static StatsExpModel GetStats(List<ScoreModel> pScores, ScoreModel pCurrentScore, uint pNbrGuessesRemaining)
         {
             if (pScores.Count == 0)
             {
@@ -36,7 +36,8 @@ namespace Poedle.Server.Data.Stats
                 WorstXAnswers = string.Join(", ", worstXAnswers),
                 BestWorstXThreshold = bestWorstX,
                 TotalAverage = GetTotalAverage(scoresSorted).ToString(),
-                AveragesPerAnswer = averagesPerAnswer.Select((x) => $"{x.Key} ({x.Value})")
+                AveragesPerAnswer = averagesPerAnswer.Select((x) => $"{x.Key} ({x.Value})"),
+                NbrHintsRemaining = pNbrGuessesRemaining.ToString()
             };
         }
 

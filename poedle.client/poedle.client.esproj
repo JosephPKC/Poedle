@@ -9,6 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\hints\types\" />
     <Folder Include="src\shared\types\" />
     <Folder Include="src\stats\types\" />
   </ItemGroup>

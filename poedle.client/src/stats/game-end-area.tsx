@@ -14,7 +14,7 @@ interface GameEndAreaProps {
 export function GameEndArea({ stats, onClickPlayAgain, onClearStats }: GameEndAreaProps) {
     const gameEndArea = (stats == null) ? (<DefaultLoadingText />) :
         (<>
-            <p>You win! The correct answer was <b>{stats?.answerName}</b>. It took you <b>{stats?.score}</b> tries!</p>
+            <p>You got <b>{stats?.answerName}</b> with <b>{stats?.score}</b> guesses and <b>{stats?.nbrHintsRemaining}</b> hints remaining!</p>
             <StatsArea stats={stats} />
             <button onClick={onClickPlayAgain}>Play Again?</button>
             <button onClick={onClearStats}>Clear Stats</button>

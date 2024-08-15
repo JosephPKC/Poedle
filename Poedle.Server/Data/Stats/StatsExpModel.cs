@@ -17,5 +17,7 @@
         // Averages
         public string TotalAverage { get; set; } = string.Empty;
         public IEnumerable<string> AveragesPerAnswer { get; set; } = [];
+        // Hints
+        public string NbrHintsRemaining {  get; set; } = string.Empty;
     }
 }

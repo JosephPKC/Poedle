@@ -1,24 +1,24 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActionMeta, SingleValue } from "react-select";
 
 import { TitleHeader } from "../shared/comps/title-header.tsx"
 import { GuessArea } from "../guess/guess-area.tsx";
 import { HintsArea } from "../hints/hints-area.tsx";
-import { AttrResultsArea } from "../results/results-area.tsx";
+import { ResultsArea } from "../results/results-area.tsx";
 import { GameEndArea } from "../stats/game-end-area.tsx";
 
 import { DropDownItem, NullableDropDownItem, NullableDropDownItemList } from "../shared/types/drop-down-item.ts";
+import { NullableAllHints } from "../hints/types/hints-type-def.ts";
 import { NullableAttrResult, NullableAttrResultList } from "../results/types/results-type-def.ts";
-import { NullableStats, Stats } from "../stats/types/stats-type-def.ts";
+import { NullableStats } from "../stats/types/stats-type-def.ts";
 
 function GameArea() {
     const headers = [
-        "Name", "Item Class", "Base Item", "Leagues Introduced", "Item Aspects", "Drop Sources", "Drop Types", "Req Lvl", "Req Dex", "Req Int", "Req Str"
+        "Name", "Item Class", "Leagues Introduced", "Item Aspects", "Drop Sources", "Drop Types", "Req Lvl", "Req Dex", "Req Int", "Req Str"
     ];
 
     const [availGuesses, setAvailGuesses] = useState<NullableDropDownItemList>(null);
-    const [nameHint, setNameHint] = useState<string>("");
-    const [nbrGuessForHint, setNbrGuessForHint] = useState<number | null>(null);
+    const [hints, setHints] = useState<NullableAllHints>(null);
     const [results, setResults] = useState<NullableAttrResultList>(null);
     const [stats, setStats] = useState<NullableStats>(null);
     const [isWin, setIsWin] = useState<boolean>(false);
@@ -49,7 +49,7 @@ function GameArea() {
         console.log("OnClickPlayAgain");
         // Reset state
         setAvailGuesses(null);
-        setNameHint("");
+        setHints(null);
         setResults(null);
         setStats(null);
         setIsWin(false);
@@ -112,12 +112,14 @@ function GameArea() {
 
     const gameArea = isWin ?
         <>
-            <WinGameArea stats={stats!} onClickPlayAgain={onClickPlayAgain} onClearStats={onClearStats} />
-            <CommonGameArea hint={nameHint} nbrGuessForHint={nbrGuessForHint} headers={headers} results={results} />
+            <HintsArea hints={hints} isWin={true} />
+            <GameEndArea stats={stats!} onClickPlayAgain={onClickPlayAgain} onClearStats={onClearStats} />
+            <ResultsArea headers={headers} results={results} />
         </> :
         <>
-            <ContGameArea availGuesses={availGuesses} selectedGuess={selectedGuess} onSelectGuess={onSelectGuess} onClickGuess={onClickGuess} />
-            <CommonGameArea hint={nameHint} nbrGuessForHint={nbrGuessForHint} headers={headers} results={results} />
+            <HintsArea hints={hints} isWin={false} />
+            <GuessArea availGuesses={availGuesses} selectedGuess={selectedGuess} onSelectGuess={onSelectGuess} onClickGuess={onClickGuess} />
+            <ResultsArea headers={headers} results={results} />
         </>;
 
     return (
@@ -129,7 +131,7 @@ function GameArea() {
     // Retrieve data from API
     async function GetAvailGuesses() {
         const apiName: string = "GetAvailGuesses";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Answers/AllAvailable";
+        const apiUrl: string = "/Poedle/UniqueItems/Answers/AllAvailable";
         const processData = (data: any) => {
             setAvailGuesses(data);
         };
@@ -137,29 +139,20 @@ function GameArea() {
         await GetJsonDataFromApi(apiName, apiUrl, processData, ApiReturnType.Json);
     }
 
-    async function GetNameHint() {
-        const apiName: string = "GetNameHint";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Hints/Name";
+    async function GetHints() {
+        const apiName: string = "GetHints";
+        const apiUrl: string = "/Poedle/UniqueItems/Hints/All";
         const processData = (data: any) => {
-            setNameHint(data);
+            setHints(data);
+            console.log(data);
         };
 
-        await GetJsonDataFromApi(apiName, apiUrl, processData, ApiReturnType.Text);
-    }
-
-    async function GetNbrGuessesForHint() {
-        const apiName: string = "GetNbrGuessesForHint";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Hints/NbrGuessRemaining";
-        const processData = (data: any) => {
-            setNbrGuessForHint(data);
-        };
-
-        await GetJsonDataFromApi(apiName, apiUrl, processData, ApiReturnType.Text);
+        await GetJsonDataFromApi(apiName, apiUrl, processData, ApiReturnType.Json);
     }
 
     async function GetResults() {
         const apiName: string = "GetResults";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Results";
+        const apiUrl: string = "/Poedle/UniqueItems/Results";
         const processData = (data: any) => {
             setResults(data);
         };
@@ -169,7 +162,7 @@ function GameArea() {
 
     async function GetIsWin() {
         const apiName: string = "GetIsWin";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Game/IsWin";
+        const apiUrl: string = "/Poedle/UniqueItems/Game/IsWin";
         const processData = (data: any) => {
             setIsWin(data == "true");
         };
@@ -179,7 +172,7 @@ function GameArea() {
 
     async function GetStats() {
         const apiName: string = "GetStats";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Stats";
+        const apiUrl: string = "/Poedle/UniqueItems/Stats";
         const processData = (data: any) => {
             setStats(data);
         };
@@ -190,7 +183,7 @@ function GameArea() {
     // Post data to API for processing
     async function ProcessGuess(guessId: number) {
         const apiName: string = "ProcessGuess";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Results/Process/" + guessId;
+        const apiUrl: string = "/Poedle/UniqueItems/Results/Process/" + guessId;
         const processData = (data: any) => {
             setProcessedGuess(data);
         };
@@ -200,7 +193,7 @@ function GameArea() {
 
     async function ClearStats() {
         const apiName: string = "ClearStats";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Stats/Clear";
+        const apiUrl: string = "/Poedle/UniqueItems/Stats/Clear";
         const processData = (data: any) => {
             setIsClearStats(data);
         };
@@ -210,7 +203,7 @@ function GameArea() {
 
     async function ResetGame() {
         const apiName: string = "ResetGame";
-        const apiUrl: string = "/Poedle/UniqueByAttr/Game/Reset";
+        const apiUrl: string = "/Poedle/UniqueItems/Game/Reset";
         const processData = (data: any) => {
             setIsResetGame(data);
         };
@@ -222,8 +215,7 @@ function GameArea() {
     function FetchApi() {
         GetIsWin();
         GetAvailGuesses();
-        GetNameHint();
-        GetNbrGuessesForHint();
+        GetHints();
         GetResults();
     }
     enum ApiReturnType {
@@ -250,9 +242,7 @@ function GameArea() {
 
         const requestOptions = GetRequestOptions(apiReturnType);
         const response = await fetch(apiUrl, requestOptions);
-
-
-        const data = await response.json();
+        const data = await GetResponseData(response, apiReturnType);
         if (processData) {
             processData(data);
         }
@@ -294,55 +284,10 @@ function GameArea() {
     }
 }
 
-interface CommonGameAreaProps {
-    hint: string,
-    nbrGuessForHint: number | null,
-    headers: string[],
-    results: NullableAttrResultList
-}
-
-function CommonGameArea({ hint, nbrGuessForHint, headers, results }: CommonGameAreaProps) {
-    return (
-        <>
-            <HintsArea hints={hint} nbrGuessForHint={nbrGuessForHint} />
-            <AttrResultsArea headers={headers} results={results} />
-        </>
-    );
-}
-
-interface WinGameAreaProps {
-    stats: Stats,
-    onClickPlayAgain: MouseEventHandler,
-    onClearStats: MouseEventHandler
-}
-
-function WinGameArea({ stats, onClickPlayAgain, onClearStats }: WinGameAreaProps) {
-    return (
-        <>
-            <GameEndArea stats={stats} onClickPlayAgain={onClickPlayAgain} onClearStats={onClearStats} />
-        </>
-    );
-}
-
-interface ContGameAreaProps {
-    availGuesses: NullableDropDownItemList,
-    selectedGuess: NullableDropDownItem,
-    onSelectGuess: (newValue: SingleValue<DropDownItem>, actionMeta: ActionMeta<DropDownItem>) => void,
-    onClickGuess: MouseEventHandler
-}
-
-function ContGameArea({ availGuesses, selectedGuess, onSelectGuess, onClickGuess }: ContGameAreaProps) {
-    return (
-        <>
-            <GuessArea availGuesses={availGuesses} selectedGuess={selectedGuess} onSelectGuess={onSelectGuess} onClickGuess={onClickGuess} />
-        </>
-    );
-}
-
-export function ByAttr() {
+export function UniqueItemsGame() {
     return (
         <div>
-            <TitleHeader gameGuessType="Attribute" />
+            <TitleHeader gameGuessType="Unique Item" />
             <GameArea />
         </div>
     );

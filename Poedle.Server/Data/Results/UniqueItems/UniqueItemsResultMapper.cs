@@ -1,10 +1,10 @@
 ﻿using PoeWikiData.Models.UniqueItems;
 
-namespace Poedle.Server.Data.Results.UniqueByAttr
+namespace Poedle.Server.Data.Results.UniqueItems
 {
-    internal static class UniqueByAttrResultMapper
+    internal static class UniqueItemsResultMapper
     {
-        public static UniqueByAttrResultExpModel GetResult(UniqueItemDbModel pGuess, UniqueItemDbModel pAnswer)
+        public static UniqueItemsResultExpModel GetResult(UniqueItemDbModel pGuess, UniqueItemDbModel pAnswer)
         {
             return new()
             {
@@ -13,8 +13,6 @@ namespace Poedle.Server.Data.Results.UniqueByAttr
                 NameResult = GuessResultUtils.CompareStrings(pGuess.DisplayName, pAnswer.DisplayName),
                 ItemClass = pGuess.ItemClass.DisplayName,
                 ItemClassResult = GuessResultUtils.CompareEnumValues(pGuess.ItemClass.Id, pAnswer.ItemClass.Id),
-                BaseItem = pGuess.BaseItem,
-                BaseItemResult = GuessResultUtils.CompareStrings(pGuess.BaseItem, pAnswer.BaseItem),
                 ReqLvl = pGuess.ReqLvl.ToString(),
                 ReqLvlResult = GuessResultUtils.CompareNumbers(pGuess.ReqLvl, pAnswer.ReqLvl, 20),
                 ReqDex = pGuess.ReqDex.ToString(),

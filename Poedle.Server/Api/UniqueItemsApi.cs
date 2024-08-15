@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Poedle.Server.Data.Answers;
-using Poedle.Server.Data.Results.UniqueByAttr;
+using Poedle.Server.Data.Hints.ExpHints;
+using Poedle.Server.Data.Results.UniqueItems;
 using Poedle.Server.Data.Stats;
-using Poedle.Server.States;
+using Poedle.Server.States.UniqueItems;
 
 namespace Poedle.Server.Api
 {
     [ApiController]
-    [Route("Poedle/UniqueByAttr")]
-    public class UniqueByAttrApi : BaseApi
+    [Route("Poedle/UniqueItems")]
+    public class UniqueItemsApi : BaseApi
     {
-        private readonly UniqueByAttrStateController _controller = GameManager.Instance.UniqueByAttr;
+        private readonly UniqueItemsStateController _controller = GameManager.Instance.UniqueItemsGame;
 
         #region "Answers"
         [HttpGet("Answers/AllAvailable")]
@@ -18,32 +19,15 @@ namespace Poedle.Server.Api
         {
             return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetAllAvailableAnswers);
         }
-
-        [HttpGet("Answers/Chosen")]
-        public AnswerExpModel GetChosenAnswer()
-        {
-            return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetChosenAnswer);
-        }
         #endregion
 
         #region "Hints"
-        [HttpGet("Hints/Display")]
-        public IEnumerable<string> GetDisplayHints()
+        [HttpGet("Hints/All")]
+        public AllHintsExpModel GetHints()
         {
-            return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetDisplayHints);
+            return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetHints);
         }
 
-        [HttpGet("Hints/Name")]
-        public string GetNameHints()
-        {
-            return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetNameHint);
-        }
-
-        [HttpGet("Hints/NbrGuessRemaining")]
-        public int GetNumberfOGuessesForHint()
-        {
-            return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetNumberOfGuessesForHint);
-        }
         #endregion
 
         #region "Stats"
@@ -63,15 +47,15 @@ namespace Poedle.Server.Api
 
         #region "Results"
         [HttpGet("Results")]
-        public IEnumerable<UniqueByAttrResultExpModel> GetResults()
+        public IEnumerable<UniqueItemsResultExpModel> GetResults()
         {
             return ProcessApi(new HttpContextAccessor().HttpContext, _controller.GetResults);
         }
 
         [HttpPost("Results/Process/{guessId:int}")]
-        public UniqueByAttrResultExpModel ProcessResults(int guessId)
+        public UniqueItemsResultExpModel ProcessResults(int guessId)
         {
-            UniqueByAttrResultExpModel ProcessGuess() => _controller.ProcessGuess((uint)guessId);
+            UniqueItemsResultExpModel ProcessGuess() => _controller.ProcessGuess((uint)guessId);
             return ProcessApi(new HttpContextAccessor().HttpContext, ProcessGuess);
         }
         #endregion

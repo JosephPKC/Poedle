@@ -4,7 +4,7 @@ export function NavBar() {
     return (
         <nav>
             <div>
-                <NavLink to="/by-attr">By Attribute</NavLink>
+                <NavLink to="/unique-items">Unique Items</NavLink>
             </div>
         </nav>
     );
