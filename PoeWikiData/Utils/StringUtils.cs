@@ -26,11 +26,6 @@ namespace PoeWikiData.Utils
             return textInfo.ToTitleCase(NoSpaceDash(pStr.ToLower()));
         }
 
-        public static string DisplayText(string pStr)
-        {
-            return Regex.Replace(pStr, "([a-z](?=[A-Z]|[0-9])|[A-Z](?=[A-Z][a-z]|[0-9])|[0-9](?=[^0-9]))", "$1 ");
-        }
-
         public static string CleanUpEndlines(string pStr)
         {
             return pStr.Trim().Replace("\n\n", "\n");

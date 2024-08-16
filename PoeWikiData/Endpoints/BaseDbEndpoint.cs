@@ -93,7 +93,7 @@ namespace PoeWikiData.Endpoints
             {
                 Drop(schema.Table);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine($"Table {schema.Table} not found.");
             }
@@ -146,12 +146,13 @@ namespace PoeWikiData.Endpoints
             return Select(schema.Table, null, pWhere, null, pOrderBy, pIsAsc, null, false, pCreateModel);
         }
 
-        protected IEnumerable<TData> SelectLinks<TLinkModel, TData>(PoeDbSchemaTypes pSchemaType, string pIdCol, uint pId, Func<IDataReader, IEnumerable<TLinkModel>> pCreateModel, Func<IEnumerable<TLinkModel>, IEnumerable<TData>> pCreateModelFromLinks) where TLinkModel : BaseDbModel
+        protected IEnumerable<TData> SelectLinks<TLinkModel, TData>(PoeDbSchemaTypes pSchemaType, Func<IDataReader, IEnumerable<TLinkModel>> pCreateModel, Func<IEnumerable<TLinkModel>, IEnumerable<TData>> pCreateModelFromLinks, string pIdCol, uint pId, string? pOrderCol = null, bool? pIsAsc = null) where TLinkModel : BaseDbModel
         {
             string where = $"{pIdCol}={SQLiteUtils.SQLiteString(pId.ToString())}";
-            IEnumerable<TLinkModel> links = SelectAll(pSchemaType, pCreateModel, where);
+            IEnumerable<TLinkModel> links = SelectAll(pSchemaType, pCreateModel, where, pOrderCol, pIsAsc);
             return pCreateModelFromLinks(links);
         }
+
         #endregion
 
         #region "Basic Generic Queries"

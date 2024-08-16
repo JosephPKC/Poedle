@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
+
 using PoeWikiApi.Models;
 using PoeWikiData.Mappers.StaticData;
-using PoeWikiData.Models.Common;
 using PoeWikiData.Models.Leagues;
 using PoeWikiData.Models.StaticData;
 using PoeWikiData.Models.StaticData.Enums;

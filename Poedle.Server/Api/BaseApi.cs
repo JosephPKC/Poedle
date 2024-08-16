@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+
 using BaseToolsUtils.Logging.Writers;
 using BaseToolsUtils.Logging;
 
 namespace Poedle.Server.Api
 {
     [ApiController]
-    public abstract class BaseApi
+    public abstract class BaseApi : Controller
     {
         private readonly ConsoleLogger _log = new(new ConsoleWriter());
 
-        protected TReturn ProcessApi<TReturn>(HttpContext? pContext, Func<TReturn> pProcessData)
+        protected TReturn ProcessApi<TReturn>(string? pRoute, Func<TReturn> pProcessData)
         {
             Stopwatch timer = new();
-            string fullRoute = pContext?.Request.Path.Value ?? "";
+            string fullRoute = pRoute ?? "";
             _log.TimeStartLog(timer, $"BEGIN: {fullRoute}");
 
             TReturn result = pProcessData();
@@ -23,10 +24,10 @@ namespace Poedle.Server.Api
             return result;
         }
 
-        protected void ProcessApi(HttpContext? pContext, Action pProcessData)
+        protected void ProcessApi(string? pRoute, Action pProcessData)
         {
             Stopwatch timer = new();
-            string fullRoute = pContext?.Request.Path.Value ?? "";
+            string fullRoute = pRoute ?? "";
             _log.TimeStartLog(timer, $"BEGIN: {fullRoute}");
 
             pProcessData();

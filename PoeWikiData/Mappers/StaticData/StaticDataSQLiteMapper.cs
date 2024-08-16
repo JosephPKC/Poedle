@@ -1,6 +1,6 @@
-﻿using PoeWikiData.Models;
+﻿using BaseToolsUtils.Utils;
+using PoeWikiData.Models;
 using PoeWikiData.Models.StaticData;
-using PoeWikiData.Utils;
 using PoeWikiData.Utils.SQLite;
 
 namespace PoeWikiData.Mappers.StaticData
@@ -13,7 +13,7 @@ namespace PoeWikiData.Mappers.StaticData
             [
                 SQLiteUtils.SQLiteString(pModel.Id.ToString()),
                 SQLiteUtils.SQLiteString(pModel.Name),
-                SQLiteUtils.SQLiteString(StringUtils.DisplayText(pModel.Name)),
+                SQLiteUtils.SQLiteString(GeneralUtils.DisplayText(pModel.Name)),
             ];
             return new(values);
         }

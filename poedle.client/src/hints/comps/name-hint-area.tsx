@@ -1,8 +1,8 @@
-import { Hint, NullableHint } from "../types/hints-type-def";
+import { SingleHint, NullableSingleHint } from "../types/hints-type-def";
 
 interface NameHintAreaProps {
-    readonly nameHint: Hint
-    readonly secondaryNameHint: NullableHint
+    readonly nameHint: SingleHint
+    readonly secondaryNameHint: NullableSingleHint
 }
 
 export function NameHintArea({ nameHint, secondaryNameHint }: NameHintAreaProps) {

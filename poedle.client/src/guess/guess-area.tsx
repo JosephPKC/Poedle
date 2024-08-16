@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import Select, { ActionMeta, SingleValue } from "react-select";
+import Select, { ActionMeta, createFilter, SingleValue } from "react-select";
 
 import { DefaultLoadingText } from "../shared/comps/default-loading-text.tsx";
 
@@ -15,10 +15,18 @@ interface GuessAreaProps {
 
 export function GuessArea({ availGuesses, selectedGuess, onSelectGuess, onClickGuess }: GuessAreaProps) {
     const ddlName = "ddl-avail-guesses";
+
+    const filterConfig = {
+        ignoreCase: true,
+        ignoreAccents: true,
+        trim: true,
+        matchFrom: "any" as const
+    };
+
     const guessArea = (availGuesses == null) ? (<DefaultLoadingText />) : (
         <>
             <label htmlFor={ddlName}>Guess: </label>
-            <Select name={ddlName} onChange={onSelectGuess} value={selectedGuess} options={availGuesses} />
+            <Select name={ddlName} onChange={onSelectGuess} value={selectedGuess} options={availGuesses} isSearchable={true} filterOption={createFilter(filterConfig)} />
             <button type="button" onClick={onClickGuess}>Guess</button>
         </>
     );

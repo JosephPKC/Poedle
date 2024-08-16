@@ -1,7 +1,7 @@
-import { HintList } from "../types/hints-type-def";
+import { StatHint } from "../types/hints-type-def";
 
 interface StatHintAreaProps {
-    readonly statModHint: HintList
+    readonly statModHint: StatHint
 }
 
 export function StatHintArea({ statModHint }: StatHintAreaProps) {
@@ -9,9 +9,18 @@ export function StatHintArea({ statModHint }: StatHintAreaProps) {
     return (
         <div>
             <p><span className="cl-span-heading">Stats</span>:</p>
-            {statModHint.hint.map((x: string) =>
-                <p key={i++}>{x}</p>
-            )}
+            <div>
+                {statModHint.hint.slice(0, statModHint.nbrImplicits).map((x: string) =>
+                    <p key={i++} className="cl-p-implicit-stat">{x}</p>
+                )}
+            </div>
+            <p>-------------------------------------------------------------</p>
+            <div>
+                {statModHint.hint.slice(statModHint.nbrImplicits).map((x: string) =>
+                    <p key={i++} className="cl-p-explicit-stat">{x}</p>
+                )}
+            </div>
+            <p>-------------------------------------------------------------</p>
         </div>
     );
 }

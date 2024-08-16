@@ -2,20 +2,26 @@ export interface AllHints {
     nbrGuessToReveal: number,
     nbrRevealsLeft: number,
     nextHintType: string,
-    nameHint: NullableHint,
-    baseItemHint: NullableHint,
-    statModHint: NullableHintList,
-    flavourHint: NullableHint
+    nameHint: NullableSingleHint,
+    baseItemHint: NullableSingleHint,
+    statModHint: NullableStatHint,
+    flavourHint: NullableListHint
 }
 
-export interface Hint {
+export interface SingleHint {
     readonly hint: string
 }
 
-export interface HintList {
+export interface ListHint {
     readonly hint: string[]
 }
 
+export interface StatHint {
+    readonly hint: string[],
+    readonly nbrImplicits: number
+}
+
 export type NullableAllHints = AllHints | null;
-export type NullableHint = Hint | null;
-export type NullableHintList = HintList | null;
+export type NullableSingleHint = SingleHint | null;
+export type NullableListHint = ListHint | null;
+export type NullableStatHint = StatHint | null;

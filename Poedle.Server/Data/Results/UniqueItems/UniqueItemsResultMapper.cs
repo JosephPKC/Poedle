@@ -10,7 +10,7 @@ namespace Poedle.Server.Data.Results.UniqueItems
             {
                 Id = pGuess.Id,
                 Name = pGuess.Name,
-                NameResult = GuessResultUtils.CompareStrings(pGuess.DisplayName, pAnswer.DisplayName),
+                NameResult = GuessResultUtils.CompareStrings(pGuess.Name, pAnswer.Name),
                 ItemClass = pGuess.ItemClass.DisplayName,
                 ItemClassResult = GuessResultUtils.CompareEnumValues(pGuess.ItemClass.Id, pAnswer.ItemClass.Id),
                 ReqLvl = pGuess.ReqLvl.ToString(),

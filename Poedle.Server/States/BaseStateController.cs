@@ -1,18 +1,25 @@
 ﻿using System.Text.RegularExpressions;
-using System.Text;
 
+using BaseToolsUtils.Utils;
 using Poedle.Server.Data.Answers;
-using Poedle.Server.Data.Hints.ExpHints;
 using Poedle.Server.Data.Hints;
 using Poedle.Server.Data.Results;
 using Poedle.Server.Data.Stats;
 using PoeWikiData.Models;
 using PoeWikiData.Models.LookUps;
+using Poedle.Server.Data.Hints.Exp;
+using Poedle.Server.Data.Hints.Shared;
+using Poedle.Server.Data.Hints.Full;
 
 namespace Poedle.Server.States
 {
-    internal abstract class BaseStateController<TResult, TModel, TState> where TResult : BaseResultExpModel where TModel : BaseNamedDbModel where TState : BaseState<TResult>, new()
+    internal abstract partial class BaseStateController<TResult, TModel, TState> where TResult : BaseResultExpModel where TModel : BaseNamedDbModel where TState : BaseState<TResult>, new()
     {
+        [GeneratedRegex(@"\s")]
+        private static partial Regex WhitespaceOnly();
+        [GeneratedRegex(@"[\w]")]
+        private static partial Regex CharNumsOnly();
+
         protected readonly TState _state;
         protected readonly IModelIdLookUp<TModel> _lookUp;
         protected readonly Dictionary<uint, AnswerExpModel> _allAnswers;
@@ -38,8 +45,8 @@ namespace Poedle.Server.States
             {
                 NbrGuessToReveal = _state.NbrGuessesToReveal,
                 NbrRevealsLeft = _state.NbrRevealsToLeft,
-                NextHintType = _state.NextHintType.ToString(),
-                NameHint = _state.NameHint
+                NextHintType = GeneralUtils.DisplayText(_state.NextHintType.ToString()),
+                NameHint = HintMapper.Map(_state.NameHint)
             };
         }
 
@@ -126,6 +133,12 @@ namespace Poedle.Server.States
 
         protected void UpdateHints()
         {
+            if (IsWin())
+            {
+                RevealAllHints();
+                return;
+            }
+
             if (_state.HintRevealQueue.Count == 0)
             {
                 // No more hint reveals left
@@ -135,12 +148,6 @@ namespace Poedle.Server.States
             if (_state.CurrentScore != _state.HintRevealQueue.Peek().ScoreMilestone)
             {
                 // Has not reached the next milestone yet.
-                return;
-            }
-
-            if (IsWin())
-            {
-                RevealAllHints();
                 return;
             }
 
@@ -160,17 +167,37 @@ namespace Poedle.Server.States
 
         protected void UpdateNameHint()
         {
-            if (_state.NameHint.RevealQueue.Count == 0)
+            static string UpdateHint(int pIndex, string pToReveal, string pCurrentHint)
             {
-                // No more letters to reveal
-                return;
+                int hintIndex = pIndex * 2;
+                return string.Concat(pCurrentHint.AsSpan(0, hintIndex), pToReveal.ToUpper(), pCurrentHint.AsSpan(hintIndex + 1));
+            };
+
+            _state.NameHint.Hint = GetUpdatedHint(_state.NameHint, _state.NameHint.Hint, UpdateHint);
+        }
+
+        protected static string GetUpdatedHint(IFullHint pFullHint, string pCurrentHint, Func<int, string, string, string> pUpdateHint)
+        {
+            if (pFullHint.IsComplete)
+            {
+                return pCurrentHint;
             }
 
+            int index = pFullHint.RevealQueue.Dequeue();
+            string toReveal = pFullHint.HintElements[index];
+            return pUpdateHint(index, toReveal, pCurrentHint);
+        }
 
-            int index = _state.NameHint.RevealQueue.Dequeue();
-            string toReveal = _state.NameHint.HintElements[index];
-            int hintIndex = index * 2;
-            _state.NameHint.Hint = string.Concat(_state.NameHint.Hint.AsSpan(0, hintIndex), toReveal.ToUpper(), _state.NameHint.Hint.AsSpan(hintIndex + 1));
+        protected static IEnumerable<string> GetUpdatedHint(IFullHint pFullHint, IEnumerable<string> pCurrentHint, Func<int, string, IEnumerable<string>, IEnumerable<string>> pUpdateHint)
+        {
+            if (pFullHint.IsComplete)
+            {
+                return pCurrentHint;
+            }
+
+            int index = pFullHint.RevealQueue.Dequeue();
+            string toReveal = pFullHint.HintElements[index];
+            return pUpdateHint(index, toReveal, pCurrentHint);
         }
 
         protected virtual void UpdateOtherHint(HintTypes pHintType)
@@ -181,7 +208,7 @@ namespace Poedle.Server.States
 
         protected virtual void RevealAllHints()
         {
-            _state.NameHint.Hint = _state.NameHint.FullyRevealedHint;
+            _state.NameHint.Hint = _state.NameHint.FullReveal;
         }
         #endregion
 
@@ -209,50 +236,36 @@ namespace Poedle.Server.States
             // Replacing all characters and numbers with '_'
             // Making sure there are spaces in between each character.
             // Atziri's Acuity -> _ _ _ _ _ _ ' _ / _ _ _ _ _ _
-            StringBuilder hintBuilder = new();
-            StringBuilder fullyRevealedBuilder = new();
-            List<int> reveals = [];
-            for (int i = 0; i < pModel.Name.Length; i++)
+            static void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
             {
-                string current = pModel.Name[i].ToString();
-                if (Regex.Match(current, @"\s") != Match.Empty)
+                if (WhitespaceOnly().Match(pHintElement) != Match.Empty)
                 {
                     // Space
-                    hintBuilder.Append("/ ");
-                    fullyRevealedBuilder.Append("/ ");
+                    pHintCol.Add("/ ");
                 }
-                else if (Regex.Match(current, @"[a-zA-Z0-9]") != Match.Empty)
+                else if (CharNumsOnly().Match(pHintElement) != Match.Empty)
                 {
                     // Letter or Number
-                    hintBuilder.Append("_ ");
-                    fullyRevealedBuilder.Append(current + " ");
-                    reveals.Add(i);
+                    pHintCol.Add("_ ");
+                    pHintReveals.Add(pIndex);
                 }
                 else
                 {
                     // Non space, non letter/number
-                    hintBuilder.Append(current + " ");
-                    fullyRevealedBuilder.Append(current + " ");
+                    pHintCol.Add(pHintElement + " ");
                 }
             }
 
-            // Set the letter reveal queue, randomized
-            // Remove letters at the end after randomization accordingly to the cut off.
-            Random rand = new();
-            for (int i = reveals.Count - 1; i > 0; i--)
+            void SetHints(Queue<int> pHintReveals, ICollection<string> pHintCol, IList<string> pHintElements)
             {
-                int j = rand.Next(i + 1);
-                (reveals[j], reveals[i]) = (reveals[i], reveals[j]);
+
+                _state.NameHint.RevealQueue = pHintReveals;
+                _state.NameHint.Hint = string.Join("", pHintCol);
+                _state.NameHint.HintElements = pHintElements;
             }
 
-            int toCutOff = (int)Math.Round(reveals.Count * _state.NameHint.RevealCutOff, MidpointRounding.ToZero);
-            int count = reveals.Count - toCutOff;
-
-            _state.NameHint.RevealQueue = new(reveals[..count]);
-            _state.NameHint.Hint = hintBuilder.ToString();
-            _state.NameHint.FullyRevealedHint = fullyRevealedBuilder.ToString().ToUpper();
-            _state.NameHint.HintElements = pModel.Name.Select((x) => x.ToString()).ToArray();
-            _state.NameHintScoreMilestones.Count = _state.NameHint.RevealQueue.Count;
+            string[] nameInChars = pModel.Name.Select((x) => x.ToString()).ToArray();
+            SetHint(nameInChars, _state.NameHint.RevealCutOff, ProcessHintElement, SetHints, RandomizerUtils.RandomizeList);
         }
 
         protected virtual void CreateHints(TModel pModel)
@@ -261,36 +274,49 @@ namespace Poedle.Server.States
             // Set specialized game hints here.
         }
 
+        protected static void SetHint(IList<string> pHintElements, double pCutOff, Action<string, int, ICollection<string>, List<int>> pProcessHintElement, Action<Queue<int>, ICollection<string>, IList<string>> pSetHints, Action<List<int>>? pPostProcessReveals = null)
+        {
+            ICollection<string> hint = [];
+            List<int> reveals = [];
+            // Process the Hint Elements to create the Hints and Reveals.
+            for (int i = 0; i < pHintElements.Count; i++)
+            {
+                pProcessHintElement(pHintElements[i], i, hint, reveals);
+            }
+
+            pPostProcessReveals?.Invoke(reveals);
+
+            // Calculate Cut Off and apply to Reveals.
+            int toCutOff = (int)Math.Round(reveals.Count * pCutOff, MidpointRounding.ToZero);
+            int count = reveals.Count - toCutOff;
+
+            // Set the Hints
+            pSetHints(new(reveals[..count]), hint, pHintElements);
+        }
+
         protected virtual void SetHintRevealQueue()
         {
-            ICollection<HintReveal> queue = [];
-            AddHintsToRevealQueue(queue);
-            // Order it by score milestones
-            _state.HintRevealQueue = new(queue.OrderBy((x) => x.ScoreMilestone));
+            ICollection<HintReveal> queue = BuildRevealQueue();
+            _state.HintRevealQueue = new(queue);
         }
 
-        protected virtual void AddHintsToRevealQueue(ICollection<HintReveal> pCol)
+        protected virtual ICollection<HintReveal> BuildRevealQueue()
         {
-            AddHintsToCollection(pCol, _state.NameHintScoreMilestones, HintTypes.Name);
-            // Add other hint reveals to queue
-        }
-
-        protected static void AddHintsToCollection(ICollection<HintReveal> pCol, HintScoreMilestones pMilestones, HintTypes pHintType)
-        {
-            foreach (int milestone in pMilestones.ToEnumerable())
+            ICollection<HintReveal> revealCol = [];
+            for (int i = 1; i <= _state.NameHint.RevealQueue.Count; i++)
             {
-                pCol.Add(new()
-                {
-                    HintType = pHintType,
-                    ScoreMilestone = milestone
-                });
+                int milestone = (int)(i * _state.HintDifficultyMultiplier);
+                revealCol.Add(GetHintReveal(milestone, HintTypes.Name));
             }
+
+            return revealCol;
         }
         #endregion
 
         #region "Misc Helpers"
         protected AnswerExpModel ChooseRandomAnswer()
         {
+
             Random rand = new();
             int index = rand.Next(_allAnswers.Count);
             AnswerExpModel answer = _allAnswers.Values.ToList()[index];
@@ -298,20 +324,23 @@ namespace Poedle.Server.States
             return answer;
         }
 
+        protected static HintReveal GetHintReveal(int pScore, HintTypes pType)
+        {
+            return new()
+            {
+                ScoreMilestone = pScore,
+                HintType = pType
+            };
+        }
+
         protected virtual TState InitializeState()
         {
             return new()
             {
+                HintDifficultyMultiplier = 2.5,
                 NameHint = new()
                 {
-                    RevealCutOff = 0.4 // Only 60% of a name is revealed.
-                },
-                // 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, ...
-                NameHintScoreMilestones = new()
-                {
-                    // EndingScore depends on the answer length.
-                    StartingScore = 1,
-                    ScoreStep = 2
+                    RevealCutOff = 0.5 // Only 50% of a name is revealed.
                 }
             };
         }

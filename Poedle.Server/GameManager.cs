@@ -38,7 +38,7 @@ namespace Poedle.Server
             Dictionary<uint, AnswerExpModel> allAnswers = [];
             foreach (UniqueItemDbModel model in allModels)
             {
-                allAnswers.Add(model.Id, AnswerMapper.GetAnswer(model));
+                allAnswers.Add(model.Id, AnswerMapper.GetAnswer(model, model.BaseItem));
             }
 
             UniqueItemDbLookUp uniqueItemLookUp = new(allModels);

@@ -73,25 +73,25 @@ namespace PoeWikiData.Endpoints.UniqueItems
         private void AddAllLinkedData(UniqueItemDbModel pModel, LeagueDbLookUp pAllLeagues)
         {
             IEnumerable<StaticDataDbModel> GetDropSources(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.DropSources);
-            pModel.DropSources = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropSources, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetDropSources);
+            pModel.DropSources = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropSources, LinkDbReader.Read, GetDropSources, "UniqueItemId", pModel.Id);
 
             IEnumerable<StaticDataDbModel> GetDropTypes(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.DropTypes);
-            pModel.DropTypes = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropTypes, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetDropTypes);
+            pModel.DropTypes = SelectLinks(PoeDbSchemaTypes.UniqueItems_DropTypes, LinkDbReader.Read, GetDropTypes, "UniqueItemId", pModel.Id);
 
             IEnumerable<StaticDataDbModel> GetItemAspects(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, StaticDataMasterRef.ItemAspects);
-            pModel.ItemAspects = SelectLinks(PoeDbSchemaTypes.UniqueItems_ItemAspects, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetItemAspects);
+            pModel.ItemAspects = SelectLinks(PoeDbSchemaTypes.UniqueItems_ItemAspects, LinkDbReader.Read, GetItemAspects, "UniqueItemId", pModel.Id);
 
             IEnumerable<LeagueDbModel> GetLeaguesIntroduced(IEnumerable<LinkDbModel> pLinks) => UniqueItemDbLinker.GetStaticData(pLinks, pAllLeagues);
-            pModel.LeaguesIntroduced = SelectLinks(PoeDbSchemaTypes.UniqueItems_LeaguesIntroduced, "UniqueItemId", pModel.Id, LinkDbReader.Read, GetLeaguesIntroduced);
+            pModel.LeaguesIntroduced = SelectLinks(PoeDbSchemaTypes.UniqueItems_LeaguesIntroduced, LinkDbReader.Read, GetLeaguesIntroduced, "UniqueItemId", pModel.Id);
 
             IEnumerable<string> GetFlavourTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
-            pModel.FlavourText = SelectLinks(PoeDbSchemaTypes.UniqueItems_FlavourTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetFlavourTexts);
+            pModel.FlavourText = SelectLinks(PoeDbSchemaTypes.UniqueItems_FlavourTexts, LinkDbReader.ReadText, GetFlavourTexts, "UniqueItemId", pModel.Id, "TextOrder", true);
 
             IEnumerable<string> GetImplicitStatTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
-            pModel.ImplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ImplicitStatTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetImplicitStatTexts);
+            pModel.ImplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ImplicitStatTexts, LinkDbReader.ReadText, GetImplicitStatTexts, "UniqueItemId", pModel.Id, "TextOrder", true);
 
             IEnumerable<string> GetExplicitStatTexts(IEnumerable<TextLinkDbModel> pLinks) => UniqueItemDbLinker.GetTexts(pLinks);
-            pModel.ExplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ExplicitStatTexts, "UniqueItemId", pModel.Id, LinkDbReader.ReadText, GetExplicitStatTexts);
+            pModel.ExplicitStatText = SelectLinks(PoeDbSchemaTypes.UniqueItems_ExplicitStatTexts, LinkDbReader.ReadText, GetExplicitStatTexts, "UniqueItemId", pModel.Id, "TextOrder", true);
         }
         #endregion
     }

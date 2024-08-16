@@ -1,5 +1,6 @@
 ﻿using Poedle.Server.Data.Answers;
-using Poedle.Server.Data.Hints;
+using Poedle.Server.Data.Hints.Full;
+using Poedle.Server.Data.Hints.Shared;
 using Poedle.Server.Data.Results;
 using Poedle.Server.Data.Scores;
 
@@ -13,8 +14,8 @@ namespace Poedle.Server.States
         public uint ChosenAnswerId { get; set; } = 0;
         public LinkedList<AnswerExpModel> AllAvailableAnswers { get; set; } = [];
         // Hints
-        public HangmanHintModel NameHint { get; set; } = new();
-        public HintScoreMilestones NameHintScoreMilestones { get; set; } = new();
+        public double HintDifficultyMultiplier { get; set; } = 1;
+        public FullSingleHintModel NameHint { get; set; } = new();
         public Queue<HintReveal> HintRevealQueue { get; set; } = [];
         // Results
         public LinkedList<TResult> Results { get; set; } = [];

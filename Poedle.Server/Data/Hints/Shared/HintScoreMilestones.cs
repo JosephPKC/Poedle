@@ -1,4 +1,4 @@
-﻿namespace Poedle.Server.Data.Hints
+﻿namespace Poedle.Server.Data.Hints.Shared
 {
     internal class HintScoreMilestones
     {

@@ -1,4 +1,5 @@
-﻿using PoeWikiData.Models.StaticData.Enums;
+﻿using BaseToolsUtils.Utils;
+using PoeWikiData.Models.StaticData.Enums;
 using PoeWikiData.Utils;
 
 namespace PoeWikiData.Models.StaticData
@@ -20,7 +21,7 @@ namespace PoeWikiData.Models.StaticData
                 {
                     Id = EnumUtils.GetEnumValue(value),
                     Name = value.ToString(),
-                    DisplayName = StringUtils.DisplayText(value.ToString())
+                    DisplayName = GeneralUtils.DisplayText(value.ToString())
                 };
                 result.Add(model);
             }

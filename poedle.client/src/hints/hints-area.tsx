@@ -5,6 +5,8 @@ import { StatHintArea } from "./comps/stat-hint-area.tsx";
 
 import { NullableAllHints } from "./types/hints-type-def.ts";
 
+import "./styles/hints-area.css";
+
 interface HintsAreaProps {
     hints: NullableAllHints,
     isWin: boolean
@@ -16,11 +18,13 @@ export function HintsArea({ hints, isWin }: HintsAreaProps) {
     }
 
     const nbrGuessText = hints.nbrGuessToReveal > 0 && hints.nbrRevealsLeft > 0 ? 
-        <>
+        <div>
             <p>Make {hints.nbrGuessToReveal} more guess(es) to reveal the next {hints.nextHintType} hint!</p> 
             <p>{hints.nbrRevealsLeft} hints left to go!</p>
-        </> :
-        <p>No more guesses left!</p>
+        </div> :
+        <div>
+            <p>No more guesses left!</p>
+        </div>
 
     const guessText = isWin ?
         <></> :
@@ -44,7 +48,8 @@ export function HintsArea({ hints, isWin }: HintsAreaProps) {
         </>;   
 
     return (
-        <div>
+        <div id="id-div-hints-area">
+            <h3>Hints:</h3>
             {nameHintsArea}
             {statModHintsArea}
             {flavourHintsArea}

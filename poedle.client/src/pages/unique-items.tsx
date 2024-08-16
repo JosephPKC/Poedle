@@ -12,6 +12,8 @@ import { NullableAllHints } from "../hints/types/hints-type-def.ts";
 import { NullableAttrResult, NullableAttrResultList } from "../results/types/results-type-def.ts";
 import { NullableStats } from "../stats/types/stats-type-def.ts";
 
+import "./styles/unique-items.css";
+
 function GameArea() {
     const headers = [
         "Name", "Item Class", "Leagues Introduced", "Item Aspects", "Drop Sources", "Drop Types", "Req Lvl", "Req Dex", "Req Int", "Req Str"
@@ -286,7 +288,7 @@ function GameArea() {
 
 export function UniqueItemsGame() {
     return (
-        <div>
+        <div id="id-div-unique-item">
             <TitleHeader gameGuessType="Unique Item" />
             <GameArea />
         </div>
