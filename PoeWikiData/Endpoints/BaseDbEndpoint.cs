@@ -252,9 +252,19 @@ namespace PoeWikiData.Endpoints
 
             using (SQLiteCommand command = new(pQuery, _sqlite))
             {
-                _sqlite.Open();
-                command.ExecuteNonQuery();
-                _sqlite.Close();
+                try
+                {
+                    _sqlite.Open();
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                finally
+                {
+                    _sqlite.Close();
+                }
             }
 
             _log.TimeStopLogAndAppend(timer, $"END: {pQuery}");

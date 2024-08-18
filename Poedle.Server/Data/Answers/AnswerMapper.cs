@@ -14,7 +14,8 @@ namespace Poedle.Server.Data.Answers
             return new()
             {
                 Value = pModel.Id,
-                Label = label
+                Label = label,
+                AbbrName = pModel.DisplayName
             };
         }
     }

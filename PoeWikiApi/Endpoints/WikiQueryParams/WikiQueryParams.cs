@@ -33,7 +33,7 @@
             }},
             { CargoTypes.SKILLGEMS, new CargoParams() {
                 Tables = "skill_gems",
-                Fields = "_ID,_pageName,gem_description,primary_attribute,dexterity_percent,intelligence_percent,strength_percent,is_awakened_support_gem,is_vaal_skill_gem,gem_tags",
+                Fields = "_ID,_pageName,gem_description,gem_tags,primary_attribute,dexterity_percent,intelligence_percent,strength_percent",
                 Where = "_pageName NOT LIKE \"Template:%\""
             }},
             { CargoTypes.PASSIVES, new CargoParams() {

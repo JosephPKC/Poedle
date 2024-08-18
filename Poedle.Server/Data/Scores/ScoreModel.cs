@@ -35,5 +35,10 @@
 
             return string.Compare(Name, other.Name);
         }
+
+        public override string ToString()
+        {
+            return $"{Name} ({Score})";
+        }
     }
 }

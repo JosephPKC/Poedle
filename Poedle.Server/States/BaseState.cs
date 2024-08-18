@@ -14,7 +14,7 @@ namespace Poedle.Server.States
         public uint ChosenAnswerId { get; set; } = 0;
         public LinkedList<AnswerExpModel> AllAvailableAnswers { get; set; } = [];
         // Hints
-        public double HintDifficultyMultiplier { get; set; } = 1;
+        public double HintDifficultyMult{ get; set; } = 1;
         public FullSingleHintModel NameHint { get; set; } = new();
         public Queue<HintReveal> HintRevealQueue { get; set; } = [];
         // Results

@@ -4,8 +4,8 @@ interface TitleHeaderProps {
 
 export function TitleHeader({ gameGuessType }: TitleHeaderProps) {
     return (
-        <div>
-            <h3>Can you guess the <span className="text-important">{gameGuessType}</span>?</h3>
+        <div className="div-txt-box">
+            <h1 className="txt-outer">Can you guess the <span className="txt-important">{gameGuessType}</span>?</h1>
         </div>
     );
 }

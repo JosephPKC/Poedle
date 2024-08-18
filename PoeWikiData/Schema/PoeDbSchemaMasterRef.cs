@@ -28,6 +28,18 @@
                 }
             },
             {
+                PoeDbSchemaTypes.GemTags, new PoeDbSchema()
+                {
+                    Table = "GemTags",
+                    Columns =
+                    [
+                        "GemTagId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL"
+                    ]
+                }
+            },
+            {
                 PoeDbSchemaTypes.ItemAspects, new PoeDbSchema()
                 {
                     Table = "ItemAspects",
@@ -67,6 +79,35 @@
                 }
             },
             {
+                PoeDbSchemaTypes.SkillGems, new PoeDbSchema()
+                {
+                    Table = "SkillGems",
+                    Columns =
+                    [
+                        "SkillGemId INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL",
+                        "Name TEXT COLLATE NOCASE NOT NULL",
+                        "DisplayName TEXT COLLATE NOCASE NOT NULL",
+                        "Description TEXT COLLATE NOCASE NOT NULL",
+                        "PrimaryAttribute TEXT COLLATE NOCASE NOT NULL",
+                        "DexterityPercent INTEGER NOT NULL",
+                        "IntelligencePercent INTEGER NOT NULL",
+                        "StrengthPercent INTEGER NOT NULL"
+                    ]
+                }
+            },
+            {
+                PoeDbSchemaTypes.SkillGems_GemTags, new PoeDbSchema()
+                {
+                    Table = "SkillGems_GemTags",
+                    Columns =
+                    [
+                        "SkillGemId INTEGER REFERENCES SkillGems (SkillGemId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
+                        "GemTagId INTEGER REFERENCES GemTags (GemTagId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
+                        "PRIMARY KEY (SkillGemId, GemTagId)"
+                    ]
+                }
+            },
+            {
                 PoeDbSchemaTypes.UniqueItems, new PoeDbSchema()
                 {
                     Table = "UniqueItems",
@@ -91,7 +132,7 @@
                     Columns =
                     [
                         "UniqueItemId INTEGER REFERENCES UniqueItems (UniqueItemId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
-                        "DropSourceId INTEGER NOT NULL",
+                        "DropSourceId INTEGER REFERENCES DropSources (DropSourceId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
                         "PRIMARY KEY (UniqueItemId, DropSourceId)"
                     ]
                 }
@@ -103,7 +144,7 @@
                     Columns =
                     [
                         "UniqueItemId INTEGER REFERENCES UniqueItems (UniqueItemId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
-                        "DropTypeId INTEGER NOT NULL",
+                        "DropTypeId INTEGER REFERENCES DropTypes (DropTypeId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
                         "PRIMARY KEY (UniqueItemId, DropTypeId)"
                     ]
                 }
@@ -115,7 +156,7 @@
                     Columns =
                     [
                         "UniqueItemId INTEGER REFERENCES UniqueItems (UniqueItemId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
-                        "ItemAspectId INTEGER NOT NULL",
+                        "ItemAspectId INTEGER REFERENCES ItemAspects (ItemAspectId) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL",
                         "PRIMARY KEY (UniqueItemId, ItemAspectId)"
                     ]
                 }

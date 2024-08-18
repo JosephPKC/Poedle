@@ -1,0 +1,17 @@
+@import url(./global/unique-item-game.css);
+
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background-image: url("images/Background.jpg");
+    height: 100%;
+    width: 100%;
+}

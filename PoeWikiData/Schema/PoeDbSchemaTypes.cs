@@ -4,9 +4,12 @@
     {
         DropSources,
         DropTypes,
+        GemTags,
         ItemAspects,
         ItemClasses,
         Leagues,
+        SkillGems,
+        SkillGems_GemTags,
         UniqueItems,
         UniqueItems_DropSources,
         UniqueItems_DropTypes,

@@ -8,6 +8,7 @@ namespace PoeWikiData.Models.StaticData
     {
         public static StaticDataDbLookUp DropSources { get; private set; } = GetStaticDataLookUpFromEnum<DropSources>();
         public static StaticDataDbLookUp DropTypes { get; private set; } = GetStaticDataLookUpFromEnum<DropTypes>();
+        public static StaticDataDbLookUp GemTags { get; private set; } = GetStaticDataLookUpFromEnum<GemTags>();
         public static StaticDataDbLookUp ItemAspects { get; private set; } = GetStaticDataLookUpFromEnum<ItemAspects>();
         public static StaticDataDbLookUp ItemClasses { get; private set; } = GetStaticDataLookUpFromEnum<ItemClasses>();
 

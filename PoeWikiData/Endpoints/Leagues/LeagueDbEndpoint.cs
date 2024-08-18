@@ -20,12 +20,12 @@ namespace PoeWikiData.Endpoints.Leagues
         public LeagueDbModel? Select(uint pId)
         {
             string where = $"LeagueId={SQLiteUtils.SQLiteString(pId.ToString())}";
-            return SelectOne(PoeDbSchemaTypes.Leagues, LeagueSQLiteReader.Read, where);
+            return SelectOne(PoeDbSchemaTypes.Leagues, LeagueSQLiteMapper.Read, where);
         }
 
         public LeagueDbLookUp SelectAll()
         {
-            return new(SelectAll(PoeDbSchemaTypes.Leagues, LeagueSQLiteReader.Read));
+            return new(SelectAll(PoeDbSchemaTypes.Leagues, LeagueSQLiteMapper.Read));
         }
     }
 }

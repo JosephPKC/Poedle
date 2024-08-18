@@ -2,8 +2,12 @@
 {
     public enum ResultStates
     {
-        CORRECT,
-        PARTIAL,
-        WRONG
+        Correct,
+        Partial,
+        Wrong,
+        BitHigh,
+        BitLow,
+        TooHigh,
+        TooLow
     }
 }

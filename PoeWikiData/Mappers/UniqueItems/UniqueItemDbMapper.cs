@@ -35,13 +35,6 @@ namespace PoeWikiData.Mappers.UniqueItems
             };
         }
 
-        private static string GetHint(UniqueItemWikiModel pModel)
-        {
-            // WordLetters is essentially like the hangmand letters of the word, along with spaces and dashes.
-            string wordLetters = Regex.Replace(pModel.Name.Replace(" ", "   "), @"\w", "_ ");
-            return pModel.Name.ToUpper().First() + wordLetters[1..^1] + pModel.Name.ToUpper().Last();
-        }
-
         private static StaticDataDbModel GetItemClass(string pItemClass)
         {
             return StaticDataMasterRef.ItemClasses.GetByName(StringUtils.NoSpaceDash(pItemClass)) ?? new();

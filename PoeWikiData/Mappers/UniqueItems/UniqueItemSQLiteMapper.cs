@@ -1,4 +1,7 @@
-﻿using PoeWikiData.Models;
+﻿using System.Data;
+
+using PoeWikiData.Models;
+using PoeWikiData.Models.StaticData;
 using PoeWikiData.Models.UniqueItems;
 using PoeWikiData.Utils.SQLite;
 
@@ -23,25 +26,31 @@ namespace PoeWikiData.Mappers.UniqueItems
             return new(values);
         }
 
-        public static SQLiteValues MapLink(UniqueItemDbModel pModel, BaseDbModel pLink)
+        public static IEnumerable<UniqueItemDbModel> Read(IDataReader pReader)
         {
-            List<string> values =
-            [
-                pModel.Id.ToString(),
-                pLink.Id.ToString()
-            ];
-            return new(values);
+            ICollection<UniqueItemDbModel> models = [];
+            while (pReader.Read())
+            {
+                UniqueItemDbModel model = new()
+                {
+                    Id = (uint)pReader.GetInt32(0),
+                    Name = pReader.GetString(1),
+                    DisplayName = pReader.GetString(2),
+                    ItemClass = GetItemClass((uint)pReader.GetInt32(3)),
+                    BaseItem = pReader.GetString(4),
+                    ReqLvl = (uint)pReader.GetInt32(5),
+                    ReqDex = (uint)pReader.GetInt32(6),
+                    ReqInt = (uint)pReader.GetInt32(7),
+                    ReqStr = (uint)pReader.GetInt32(8)
+                };
+                models.Add(model);
+            }
+            return models;
         }
 
-        public static SQLiteValues MapLink<T>(UniqueItemDbModel pModel, T pLink, uint pOrder)
+        private static StaticDataDbModel GetItemClass(uint pItemClassId)
         {
-            List<string> values =
-            [
-                pModel.Id.ToString(),
-                SQLiteUtils.SQLiteString(pLink?.ToString()),
-                pOrder.ToString()
-            ];
-            return new(values);
+            return StaticDataMasterRef.ItemClasses.GetById(pItemClassId) ?? new();
         }
     }
 }

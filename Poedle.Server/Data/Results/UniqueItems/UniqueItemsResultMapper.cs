@@ -10,7 +10,7 @@ namespace Poedle.Server.Data.Results.UniqueItems
             {
                 Id = pGuess.Id,
                 Name = pGuess.Name,
-                NameResult = GuessResultUtils.CompareStrings(pGuess.Name, pAnswer.Name),
+                NameResult = GetNameResult(pGuess, pAnswer),
                 ItemClass = pGuess.ItemClass.DisplayName,
                 ItemClassResult = GuessResultUtils.CompareEnumValues(pGuess.ItemClass.Id, pAnswer.ItemClass.Id),
                 ReqLvl = pGuess.ReqLvl.ToString(),
@@ -30,6 +30,20 @@ namespace Poedle.Server.Data.Results.UniqueItems
                 DropTypes = GuessResultUtils.GetModelListString(pGuess.DropTypes),
                 DropTypesResult = GuessResultUtils.CompareLists(pGuess.DropTypes, pAnswer.DropTypes)
             };
+        }
+
+        private static ResultStates GetNameResult(UniqueItemDbModel pGuess, UniqueItemDbModel pAnswer)
+        {
+            // Check Display Name first
+            ResultStates result = GuessResultUtils.CompareStrings(pGuess.DisplayName, pAnswer.DisplayName);
+            if (result == ResultStates.Correct)
+            {
+                return ResultStates.Correct;
+            }
+            // Then, check Name if Display Name do not match.
+            // If match, then it is a partial at best.
+            result = GuessResultUtils.CompareStrings(pGuess.Name, pAnswer.Name);
+            return result == ResultStates.Correct ? ResultStates.Partial : ResultStates.Wrong;
         }
     }
 }

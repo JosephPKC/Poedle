@@ -7,27 +7,39 @@ namespace Poedle.Server.Data.Results
         public static ResultStates CompareEnumValues(uint pGuess, uint pActual)
         {
 
-            return pGuess == pActual ? ResultStates.CORRECT : ResultStates.WRONG;
+            return pGuess == pActual ? ResultStates.Correct : ResultStates.Wrong;
         }
 
         public static ResultStates CompareStrings(string pGuess, string pActual)
         {
 
-            return pGuess == pActual ? ResultStates.CORRECT : ResultStates.WRONG;
+            return pGuess == pActual ? ResultStates.Correct : ResultStates.Wrong;
         }
 
         public static ResultStates CompareLists<TData>(IEnumerable<TData> pGuess, IEnumerable<TData> pActual)
         {
-            if (pGuess.SequenceEqual(pActual)) return ResultStates.CORRECT;
+            if (pGuess.SequenceEqual(pActual))
+            {
+                return ResultStates.Correct;
+            }
 
-            return pGuess.Intersect(pActual).Any() ? ResultStates.PARTIAL : ResultStates.WRONG;
+            return pGuess.Intersect(pActual).Any() ? ResultStates.Partial : ResultStates.Wrong;
         }
 
         public static ResultStates CompareNumbers(uint pGuess, uint pActual, uint pThreshold)
         {
-            if (pGuess == pActual) return ResultStates.CORRECT;
+            if (pGuess == pActual)
+            {
+                return ResultStates.Correct;
+            }
 
-            return Math.Abs(pGuess - pActual) <= pThreshold ? ResultStates.PARTIAL : ResultStates.WRONG;
+            if (Math.Abs(pGuess - pActual) <= pThreshold)
+            {
+                // If within threshold
+                return pGuess > pActual ? ResultStates.BitHigh : ResultStates.BitLow;
+            }
+
+            return pGuess > pActual ? ResultStates.TooHigh : ResultStates.TooLow;
         }
 
         public static string GetModelListString<TModel>(IEnumerable<TModel> pModels) where TModel : BaseNamedDbModel
@@ -36,6 +48,7 @@ namespace Poedle.Server.Data.Results
             {
                 return "None";
             }
+
             return string.Join(",", pModels.Select((x) => x.DisplayName));
         }
     }

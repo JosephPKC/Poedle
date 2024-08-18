@@ -1,25 +1,17 @@
-﻿using System.Text.RegularExpressions;
-
-using BaseToolsUtils.Utils;
-using Poedle.Server.Data.Answers;
+﻿using Poedle.Server.Data.Answers;
 using Poedle.Server.Data.Hints;
-using Poedle.Server.Data.Hints.Exp;
 using Poedle.Server.Data.Hints.Shared;
+using Poedle.Server.Data.Hints.UniqueItems;
 using Poedle.Server.Data.Results.UniqueItems;
 using PoeWikiData.Models.UniqueItems;
 
 namespace Poedle.Server.States.UniqueItems
 {
-    internal partial class UniqueItemsStateController(UniqueItemDbLookUp pLookUp, Dictionary<uint, AnswerExpModel> pAllAnswers) : BaseStateController<UniqueItemsResultExpModel, UniqueItemDbModel, UniqueItemsState>(pLookUp, pAllAnswers)
+    internal class UniqueItemsStateController(UniqueItemDbLookUp pLookUp, Dictionary<uint, AnswerExpModel> pAllAnswers) : BaseStateController<UniqueItemsResultExpModel, UniqueItemDbModel, UniqueItemsState, UniqueItemAllHintsExpModel>(pLookUp, pAllAnswers)
     {
-        [GeneratedRegex(@"[\w\W]")]
-        private static partial Regex AllChars();
-        [GeneratedRegex(@"[\S]")]
-        private static partial Regex NonWhiteSpaceOnly();
-
-        public override AllHintsExpModel GetHints()
+        public override UniqueItemAllHintsExpModel GetHints()
         {
-            AllHintsExpModel hints = base.GetHints();
+            UniqueItemAllHintsExpModel hints = base.GetHints();
             hints.BaseItemHint = HintMapper.Map(_state.BaseItemHint);
             hints.FlavourHint = HintMapper.Map(_state.FlavourTextHint);
             hints.StatModHint = HintMapper.Map(_state.StatModHint);
@@ -29,8 +21,7 @@ namespace Poedle.Server.States.UniqueItems
 
         public override UniqueItemsResultExpModel ProcessGuess(uint pGuessId)
         {
-            static UniqueItemsResultExpModel GetGuess(UniqueItemDbModel pGuess, UniqueItemDbModel pAnswer) => UniqueItemsResultMapper.GetResult(pGuess, pAnswer);
-            return ProcessGuess(pGuessId, GetGuess);
+            return ProcessGuess(pGuessId, UniqueItemsResultMapper.GetResult);
         }
 
         protected override void UpdateOtherHint(HintTypes pHintType)
@@ -65,65 +56,17 @@ namespace Poedle.Server.States.UniqueItems
             SetBaseItemHint(pModel);
             SetStatModHint(pModel);
             SetFlavourTextHint(pModel);
-            Console.Write("");
         }
 
-        protected override ICollection<HintReveal> BuildRevealQueue()
+        protected override IEnumerable<HintTypes> GetSpecialHintRevealTypes()
         {
-            ICollection<HintReveal> revealCol = [];
-
-            List<HintTypes> nameReveals = [];
-            nameReveals.AddRange(Enumerable.Repeat(HintTypes.Name, _state.NameHint.RevealQueue.Count));
-            Queue<HintTypes> nameRevealsQueue = new(nameReveals);
-
             List<HintTypes> specialReveals = [];
+
             specialReveals.AddRange(Enumerable.Repeat(HintTypes.BaseItem, _state.BaseItemHint.RevealQueue.Count));
             specialReveals.AddRange(Enumerable.Repeat(HintTypes.FlavourText, _state.FlavourTextHint.RevealQueue.Count));
             specialReveals.AddRange(Enumerable.Repeat(HintTypes.StatMods, _state.StatModHint.RevealQueue.Count));
-            RandomizerUtils.RandomizeList(specialReveals);
-            Queue<HintTypes> specialRevealsQueue = new(specialReveals);
 
-            int i = 1;
-            while (nameRevealsQueue.Count > 0 && specialRevealsQueue.Count > 0)
-            {
-                int milestone = (int)(i * _state.HintDifficultyMultiplier);
-                // Starting with name hints, it alternates between name hints and special hints every milestone.
-                if (i % 2 == 0)
-                {
-                    ProcessAndAddHintReveal(revealCol, specialRevealsQueue, milestone);
-                }
-                else
-                {
-                    ProcessAndAddHintReveal(revealCol, nameRevealsQueue, milestone);
-                }
-                i++;
-            }
-
-            if (nameRevealsQueue.Count > 0)
-            {
-                while (nameRevealsQueue.Count > 0)
-                {
-                    ProcessAndAddHintReveal(revealCol, nameRevealsQueue, (int)(i * _state.HintDifficultyMultiplier));
-                    i++;
-                }
-            }
-
-            if (specialRevealsQueue.Count > 0)
-            {
-                while (specialRevealsQueue.Count > 0)
-                {
-                    ProcessAndAddHintReveal(revealCol, specialRevealsQueue, (int)(i * _state.HintDifficultyMultiplier));
-                    i++;
-                }
-            }
-
-            return revealCol;
-        }
-
-        private static void ProcessAndAddHintReveal(ICollection<HintReveal> pCol, Queue<HintTypes> pQueue, int pMilestone)
-        {
-            HintTypes hintType = pQueue.Dequeue();
-            pCol.Add(GetHintReveal(pMilestone, hintType));
+            return specialReveals;
         }
 
         #region "BaseItemHint"
@@ -141,9 +84,9 @@ namespace Poedle.Server.States.UniqueItems
 
         private void SetBaseItemHint(UniqueItemDbModel pModel)
         {
-            static void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
+            void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
             {
-                pHintCol.Add(NonWhiteSpaceOnly().Replace(pHintElement, "_"));
+                pHintCol.Add(ReplaceText(pHintElement, @"[\w\W]"));
                 pHintReveals.Add(pIndex);
             }
 
@@ -174,9 +117,9 @@ namespace Poedle.Server.States.UniqueItems
 
         private void SetFlavourTextHint(UniqueItemDbModel pModel)
         {
-            static void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
+            void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
             {
-                pHintCol.Add(AllChars().Replace(pHintElement, "_"));
+                pHintCol.Add(ReplaceText(pHintElement, @"[\S]"));
                 pHintReveals.Add(pIndex);
             }
 
@@ -219,9 +162,10 @@ namespace Poedle.Server.States.UniqueItems
                 statMods.AddRange(pModel.ExplicitStatText);
             }
 
-            static void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
+            void ProcessHintElement(string pHintElement, int pIndex, ICollection<string> pHintCol, List<int> pHintReveals)
             {
-                pHintCol.Add(AllChars().Replace(pHintElement, "_"));
+                //pHintCol.Add(ReplaceText(pHintElement, @"[\S]"));
+                pHintCol.Add("_");
                 pHintReveals.Add(pIndex);
             }
 

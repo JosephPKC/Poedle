@@ -6,6 +6,7 @@
         Name,
         BaseItem,
         StatMods,
-        FlavourText
+        FlavourText,
+        Description
     }
 }

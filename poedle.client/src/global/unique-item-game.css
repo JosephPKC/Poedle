@@ -1,0 +1,269 @@
+.txt-unique-item {
+    color: var(--poe-orange);
+}
+
+/* 
+    For now, put all styling for the unique-items game here 
+    Afterwards, especially once we add skill gems, we can figure out what needs to be put into a 'base', what needs to be separated, etc.
+    The same applies to the components as well.
+
+    We can leave the shared component styles alone.
+*/
+
+/* Text Styles */
+p, h1, h2, h3, h4, h5, h6, label, .txt-fontin {
+    font-family: Fontin-SmallCaps;
+}
+
+.txt-important {
+    font-weight: bolder;
+}
+
+.txt-outer {
+    color: var(--poe-tan);
+}
+
+/* Div Styles */
+.div-black-box {
+    background-color: var(--poe-black);
+}
+
+.div-table {
+    overflow-x: auto;
+}
+
+.table {
+    margin: auto;
+    padding: 3px;
+}
+
+.div-txt-box {
+    text-align: center;
+}
+
+/* Other Styles */
+.btn {
+    font-family: Fontin-SmallCaps;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.fade-border {
+    height: 2px;
+    width: 100%;
+    background-image: radial-gradient(circle, white, transparent 65%);
+}
+
+.div-game-page {
+    margin: auto;
+    width: 75%;
+}
+
+@media only screen and (max-width: 319px) {
+    .div-game-page {
+        min-width: 250px;
+    }
+}
+
+@media only screen and (min-width: 320px)  {
+    .div-game-page {
+        min-width: 450px;
+    }
+}
+
+/* Guess Area */
+.div-guess-area {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.lbl-guess {
+    color: var(--poe-tan);
+    font-family: Fontin-SmallCaps;
+    font-size: 20px;
+}
+
+.select {
+    font-family: Fontin-Regular;
+    padding: 0px 5px 0px 5px;
+    /*max-width: 400px;*/
+    width: 50%;
+}
+
+/* Hint Area */
+.txt-guess {
+    margin: auto;
+    padding: 2px;
+    text-align: center;
+    word-wrap: break-word;
+    flex-wrap: wrap;
+    font-size: 16px;
+}
+
+#div-hint-area {
+    margin: auto;
+    padding: 0;
+
+    width: 50%;
+}
+
+#div-hint-only-area {
+    margin: auto;
+    padding: 0 2px 2px 2px;
+    border: 2px solid var(--poe-orange-dark);
+}
+
+.fade-border-name {
+    height: 2px;
+    width: 100%;
+    background-image: radial-gradient(circle, var(--poe-orange-dark), transparent 80%);
+}
+
+.txt-name-hint {
+    margin: 0;
+    padding: 2px;
+    font-size: 26px;
+}
+
+.stat-hider {
+    margin: 0;
+    padding: 5px;
+    max-width: 250px;
+    width: 70%;
+}
+
+.stat-text {
+    color: var(--poe-blue);
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    padding: 3px;
+}
+
+#div-stat-implicit-mod-hint-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-stat-explicit-mod-hint-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.txt-flavour {
+    color: var(--poe-orange);
+    font-size: 18px;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+    padding: 3px;
+}
+
+/* Results Area */
+#div-results-area {
+    margin: auto;
+}
+
+/* Game End Area */
+.end-stat-text {
+    color: var(--poe-tan);
+    font-size: 18px;
+    text-align: left;
+    margin: auto;
+    padding: 2px;
+}
+
+.game-end-area {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.stat-area {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-btn-area {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.end-result-text {
+    color: var(--poe-tan);
+    font-size: 18px;
+    margin: 0;
+    padding: 5px;
+    text-align: center;
+}
+
+.end-stat-text {
+    margin: auto;
+    padding: 2px;
+    text-align: center;
+}
+
+/* Table */
+.th-table-header {
+    border-bottom: 1px solid white;
+    padding: 2px;
+    color: var(--poe-tan);
+    font-family: Fontin-SmallCaps;
+    font-size: 15px;
+}
+
+.td-green {
+    background-color: green
+}
+
+.td-orange {
+    background-color: darkorange
+}
+
+.td-red {
+    background-color: red
+}
+
+.td-black {
+    background-color: var(--poe-black);
+}
+
+.td-high:before {
+    content: "\2193";
+    margin-right: 5px;
+}
+
+.td-low:before {
+    content: "\2191";
+    margin-right: 5px;
+}
+
+.table-row-col {
+    color: white;
+    padding: 3px;
+    border: 2px solid black;
+    text-align: center;
+    overflow-wrap: normal;
+    word-wrap: break-word;
+}
+
+
+.txt-description {
+    color: var(--poe-green);
+}
+
+#div-desc-area {
+    margin: 0;
+    padding: 0px 5px 0px 5px;
+}

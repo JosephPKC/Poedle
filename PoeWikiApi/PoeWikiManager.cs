@@ -14,6 +14,7 @@ namespace PoeWikiApi
 
         #region "Endpoints"
         public LeagueWikiEndpoint Leagues { get; private set; }
+        public SkillGemWikiEndpoint SkillGems { get; private set; }
         public UniqueItemWikiEndpoint UniqueItems { get; private set; }
         #endregion
 
@@ -24,6 +25,7 @@ namespace PoeWikiApi
             _log = pLogger;
 
             Leagues = new(_http, _cache, _log);
+            SkillGems = new(_http, _cache, _log);
             UniqueItems = new(_http, _cache, _log);
         }
 

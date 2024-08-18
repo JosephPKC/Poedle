@@ -16,6 +16,7 @@ namespace PoeWikiData.Endpoints.StaticData
         {
             FullUpdateStaticData("Drop Sources", PoeDbSchemaTypes.DropSources, null, StaticDataMasterRef.DropSources, StaticDataSQLiteMapper.Map);
             FullUpdateStaticData("Drop Types", PoeDbSchemaTypes.DropTypes, null, StaticDataMasterRef.DropTypes, StaticDataSQLiteMapper.Map);
+            FullUpdateStaticData("Gem Tags", PoeDbSchemaTypes.GemTags, null, StaticDataMasterRef.GemTags, StaticDataSQLiteMapper.Map);
             FullUpdateStaticData("Item Aspects", PoeDbSchemaTypes.ItemAspects, null, StaticDataMasterRef.ItemAspects, StaticDataSQLiteMapper.Map);
             FullUpdateStaticData("Item Classes", PoeDbSchemaTypes.ItemClasses, null, StaticDataMasterRef.ItemClasses, StaticDataSQLiteMapper.Map);
         }

@@ -7,13 +7,13 @@ using Poedle.Server.Data.Results;
 using Poedle.Server.Data.Stats;
 using PoeWikiData.Models;
 using PoeWikiData.Models.LookUps;
-using Poedle.Server.Data.Hints.Exp;
 using Poedle.Server.Data.Hints.Shared;
 using Poedle.Server.Data.Hints.Full;
+using Poedle.Server.Data.Hints.Exp;
 
 namespace Poedle.Server.States
 {
-    internal abstract partial class BaseStateController<TResult, TModel, TState> where TResult : BaseResultExpModel where TModel : BaseNamedDbModel where TState : BaseState<TResult>, new()
+    internal abstract partial class BaseStateController<TResult, TModel, TState, TAllHints> where TResult : BaseResultExpModel where TModel : BaseNamedDbModel where TState : BaseState<TResult>, new() where TAllHints : BaseAllHintsExpModel, new()
     {
         [GeneratedRegex(@"\s")]
         private static partial Regex WhitespaceOnly();
@@ -39,13 +39,13 @@ namespace Poedle.Server.States
             return _state.AllAvailableAnswers;
         }
 
-        public virtual AllHintsExpModel GetHints()
+        public virtual TAllHints GetHints()
         {
             return new()
             {
                 NbrGuessToReveal = _state.NbrGuessesToReveal,
                 NbrRevealsLeft = _state.NbrRevealsToLeft,
-                NextHintType = GeneralUtils.DisplayText(_state.NextHintType.ToString()),
+                NextHintType = GetHintTypeText(_state.NextHintType),
                 NameHint = HintMapper.Map(_state.NameHint)
             };
         }
@@ -80,7 +80,7 @@ namespace Poedle.Server.States
             _state.Scores.Add(new()
             {
                 Id = chosenAnswer.Value,
-                Name = chosenAnswer.Label,
+                Name = chosenAnswer.AbbrName,
                 Score = 0
             });
             _state.IsWin = false;
@@ -303,20 +303,80 @@ namespace Poedle.Server.States
         protected virtual ICollection<HintReveal> BuildRevealQueue()
         {
             ICollection<HintReveal> revealCol = [];
-            for (int i = 1; i <= _state.NameHint.RevealQueue.Count; i++)
+
+            List<HintTypes> nameReveals = [];
+            nameReveals.AddRange(Enumerable.Repeat(HintTypes.Name, _state.NameHint.RevealQueue.Count));
+            Queue<HintTypes> nameRevealsQueue = new(nameReveals);
+
+            List<HintTypes> specialReveals = (List<HintTypes>)GetSpecialHintRevealTypes();
+            if (specialReveals.Count > 0)
             {
-                int milestone = (int)(i * _state.HintDifficultyMultiplier);
-                revealCol.Add(GetHintReveal(milestone, HintTypes.Name));
+                RandomizerUtils.RandomizeList(specialReveals);
+            }
+            
+            Queue<HintTypes> specialRevealsQueue = new(specialReveals);
+
+            int i = 1;
+            while (nameRevealsQueue.Count > 0 && specialRevealsQueue.Count > 0)
+            {
+                ProcessHintReveal(i, revealCol, nameRevealsQueue, specialRevealsQueue);
+                i++;
+            }
+
+            if (nameRevealsQueue.Count > 0)
+            {
+                while (nameRevealsQueue.Count > 0)
+                {
+                    ProcessAndAddHintReveal(revealCol, nameRevealsQueue, GetMilestone(i, _state.HintDifficultyMult));
+                    i++;
+                }
+            }
+
+            if (specialRevealsQueue.Count > 0)
+            {
+                while (specialRevealsQueue.Count > 0)
+                {
+                    ProcessAndAddHintReveal(revealCol, specialRevealsQueue, GetMilestone(i, _state.HintDifficultyMult));
+                    i++;
+                }
             }
 
             return revealCol;
+        }
+
+        protected static int GetMilestone(double pCurrent, double pMult)
+        {
+            return (int)(pCurrent * pMult);
+        }
+
+        protected virtual IEnumerable<HintTypes> GetSpecialHintRevealTypes()
+        {
+            return [];
+        }
+
+        protected virtual void ProcessHintReveal(int pCurrent, ICollection<HintReveal> pCol, Queue<HintTypes> pNameHintQueue, Queue<HintTypes> pSpecialHintQueue)
+        {
+            // Starting with name hints, it alternates between name hints and special hints every milestone.
+            if (pCurrent % 2 == 0)
+            {
+                ProcessAndAddHintReveal(pCol, pSpecialHintQueue, GetMilestone(pCurrent, _state.HintDifficultyMult));
+            }
+            else
+            {
+                ProcessAndAddHintReveal(pCol, pNameHintQueue, GetMilestone(pCurrent, _state.HintDifficultyMult));
+            }
+        }
+
+        protected static void ProcessAndAddHintReveal(ICollection<HintReveal> pCol, Queue<HintTypes> pQueue, int pMilestone)
+        {
+            HintTypes hintType = pQueue.Dequeue();
+            pCol.Add(GetHintReveal(pMilestone, hintType));
         }
         #endregion
 
         #region "Misc Helpers"
         protected AnswerExpModel ChooseRandomAnswer()
         {
-
             Random rand = new();
             int index = rand.Next(_allAnswers.Count);
             AnswerExpModel answer = _allAnswers.Values.ToList()[index];
@@ -337,11 +397,35 @@ namespace Poedle.Server.States
         {
             return new()
             {
-                HintDifficultyMultiplier = 2.5,
+                HintDifficultyMult = 2.5,
                 NameHint = new()
                 {
                     RevealCutOff = 0.5 // Only 50% of a name is revealed.
                 }
+            };
+        }
+
+        protected virtual string ReplaceText(string pText, string pPattern, string? pReplacement = null)
+        {
+            string rep = pReplacement ?? DefaultReplacementText();
+            return Regex.Replace(pText, pPattern, rep);
+        }
+
+        protected virtual string DefaultReplacementText()
+        {
+            return "-";
+        }
+
+        protected virtual string GetHintTypeText(HintTypes pHintType)
+        {
+            return pHintType switch
+            {
+                HintTypes.BaseItem => "Base Item",
+                HintTypes.FlavourText => "Flavour Text",
+                HintTypes.Name => "Name",
+                HintTypes.StatMods => "Stat Text",
+                HintTypes.Description => "Description",
+                _ => "",
             };
         }
         #endregion

@@ -4,6 +4,6 @@
     {
         public uint Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
-        public ResultStates NameResult { get; set; } = ResultStates.CORRECT;
+        public ResultStates NameResult { get; set; } = ResultStates.Correct;
     }
 }

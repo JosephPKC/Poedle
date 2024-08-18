@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+
 using BaseToolsUtils.Logging;
 using BaseToolsUtils.Logging.Writers;
 using Poedle.Server.Data.Answers;
+using Poedle.Server.States.SkillGems;
 using Poedle.Server.States.UniqueItems;
 using PoeWikiData;
 using PoeWikiData.Models.UniqueItems;
@@ -17,6 +18,7 @@ namespace Poedle.Server
         private readonly ConsoleLogger _log;
         private readonly PoeDbManager _db;
 
+        public SkillGemsStateController SkillGemsGame { get; private set; }
         public UniqueItemsStateController UniqueItemsGame { get; private set; }
 
         static GameManager() { }
@@ -26,10 +28,31 @@ namespace Poedle.Server
             _log = new(new ConsoleWriter());
             _db = new(Path.Combine(Environment.CurrentDirectory, @"..\DbData", "PoeDb.db"), false, _log);
 
-            UniqueItemsGame = GetUniqueByAttrStateController();
+            SkillGemsGame = GetSkillGemsStateController();
+            UniqueItemsGame = GetUniqueItemsStateController();
         }
 
-        private UniqueItemsStateController GetUniqueByAttrStateController()
+        private SkillGemsStateController GetSkillGemsStateController()
+        {
+            Stopwatch timer = new();
+            _log.TimeStartLog(timer, $"BEGIN: Get all skill gems from db.");
+
+            IEnumerable<SkillGemDbModel> allModels = _db.GetAll<SkillGemDbModel>(true);
+            Dictionary<uint, AnswerExpModel> allAnswers = [];
+            foreach (SkillGemDbModel model in allModels)
+            {
+                allAnswers.Add(model.Id, AnswerMapper.GetAnswer(model));
+            }
+
+            SkillGemDbLookup uniqueItemLookUp = new(allModels);
+            SkillGemsStateController control = new(uniqueItemLookUp, allAnswers);
+
+            _log.TimeStopLogAndAppend(timer, $"END: Get all skill gems from db.");
+
+            return control;
+        }
+
+        private UniqueItemsStateController GetUniqueItemsStateController()
         {
             Stopwatch timer = new();
             _log.TimeStartLog(timer, $"BEGIN: Get all unique items from db.");
