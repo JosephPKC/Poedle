@@ -1,0 +1,18 @@
+.select {
+    margin: 0;
+    padding: 5px;
+    max-width: 500px;
+    min-width: 250px;
+    width: 50%;
+    font-family: Fontin-Regular;
+}
+
+#div-guess-select {
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}

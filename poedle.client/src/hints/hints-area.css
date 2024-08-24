@@ -1,0 +1,79 @@
+.div-hints {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--poe-black);
+}
+
+.div-stat-hints {
+    margin: auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.img-stat-hider {
+    margin: auto;
+    padding: 10px;
+    min-width: 0;
+}
+
+.txt-guess {
+    margin: auto;
+    padding: 5px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.txt-stat-mod {
+    margin: auto;
+    padding: 10px;
+    min-width: 0;
+    font-size: 20px;
+}
+
+#div-hints-area {
+    margin: auto;
+    padding: 0;
+    min-width: 0;
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-hint-guess-text {
+    margin: auto;
+    padding: 0;
+}
+
+#txt-desc {
+    margin: auto;
+    padding: 10px;
+    font-size: 20px;
+}
+
+#txt-flavour-hint {
+    margin: auto;
+    padding: 10px;
+    font-size: 18px;
+}
+
+#txt-name-hint {
+    margin: auto;
+    padding: 10px;
+    font-size: 26px;
+}
+
+#txt-secondary-hint {
+    margin: auto;
+    padding: 10px;
+    font-size: 18px;
+}

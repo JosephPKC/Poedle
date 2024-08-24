@@ -1,0 +1,88 @@
+/* Custom Font Imports */
+@font-face {
+    font-family: "Fontin-Bold";
+    src: local("Fontin"), url(.fonts/Fontin/Fontin-Bold.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Fontin-Italic";
+    src: local("Fontin"), url(./fonts/Fontin/Fontin-Italic.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Fontin-Regular";
+    src: local("Fontin"), url(./fonts/Fontin/Fontin-Regular.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Fontin-SmallCaps";
+    src: local("Fontin"), url(./fonts/Fontin//Fontin-SmallCaps.ttf) format("truetype");
+}
+
+/* Custom Variables */
+:root {
+    --poe-black: rgb(32, 33, 34);
+    --poe-blue: rgb(174, 186, 206);
+    --poe-brown-light: rgb(253, 216, 141);
+    --poe-green: rgb(177, 229, 200);
+    --poe-green-dark: rgb(27, 162, 155);
+    --poe-orange: rgb(218, 169, 120);
+    --poe-orange-dark: #93683f;
+    --poe-tan: rgb(245, 222, 166);
+    --poe-white: rgb(173, 158, 132);
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Text Styles */
+p, h1, h2, h3, h4, h5, h6, label, tr {
+    font-family: Fontin-SmallCaps;
+}
+
+.txt-center {
+    text-align: center;
+}
+
+.txt-outer {
+    color: var(--poe-tan);
+}
+
+.txt-strong {
+    font-weight: bolder;
+}
+
+.txt-wrap {
+    flex-wrap: wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Div Styles */
+#div-game-area {
+    margin: auto;
+    min-width: 0;
+    width: 85%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+/* Other Styles */
+.button {
+    font-family: Fontin-SmallCaps;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.fade-border {
+    height: 2px;
+    width: 100%;
+    background-image: radial-gradient(circle, white, transparent 65%);
+}

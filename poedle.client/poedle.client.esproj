@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="public\fonts\Fontin\" />
-    <Folder Include="src\pages\styles\" />
-    <Folder Include="src\shared\types\" />
+    <Folder Include="src\common\drop-down-item\" />
+    <Folder Include="src\stats\stats\" />
   </ItemGroup>
 </Project>

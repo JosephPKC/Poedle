@@ -1,0 +1,35 @@
+.txt-stat {
+    margin: auto;
+    padding: 5px;
+    min-width: 0;
+    font-size: 18px;
+}
+
+#div-stats {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-stats-buttons {
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#div-stats-area {
+
+}
+
+#txt-stats-answer {
+    font-size: 20px;
+    min-width: 0;
+}

@@ -8,27 +8,16 @@ namespace Poedle.Server.Data.Results.UniqueItems
         {
             return new()
             {
-                Id = pGuess.Id,
-                Name = pGuess.Name,
-                NameResult = GetNameResult(pGuess, pAnswer),
-                ItemClass = pGuess.ItemClass.DisplayName,
-                ItemClassResult = GuessResultUtils.CompareEnumValues(pGuess.ItemClass.Id, pAnswer.ItemClass.Id),
-                ReqLvl = pGuess.ReqLvl.ToString(),
-                ReqLvlResult = GuessResultUtils.CompareNumbers(pGuess.ReqLvl, pAnswer.ReqLvl, 20),
-                ReqDex = pGuess.ReqDex.ToString(),
-                ReqDexResult = GuessResultUtils.CompareNumbers(pGuess.ReqDex, pAnswer.ReqDex, 20),
-                ReqInt = pGuess.ReqInt.ToString(),
-                ReqIntResult = GuessResultUtils.CompareNumbers(pGuess.ReqInt, pAnswer.ReqInt, 20),
-                ReqStr = pGuess.ReqStr.ToString(),
-                ReqStrResult = GuessResultUtils.CompareNumbers(pGuess.ReqStr, pAnswer.ReqStr, 20),
-                LeaguesIntroduced = GuessResultUtils.GetModelListString(pGuess.LeaguesIntroduced),
-                LeaguesIntroducedResult = GuessResultUtils.CompareLists(pGuess.LeaguesIntroduced, pAnswer.LeaguesIntroduced),
-                ItemAspects = GuessResultUtils.GetModelListString(pGuess.ItemAspects),
-                ItemAspectsResult = GuessResultUtils.CompareLists(pGuess.ItemAspects, pAnswer.ItemAspects),
-                DropSources = GuessResultUtils.GetModelListString(pGuess.DropSources),
-                DropSourcesResult = GuessResultUtils.CompareLists(pGuess.DropSources, pAnswer.DropSources),
-                DropTypes = GuessResultUtils.GetModelListString(pGuess.DropTypes),
-                DropTypesResult = GuessResultUtils.CompareLists(pGuess.DropTypes, pAnswer.DropTypes)
+                Name = new(pGuess.Name, GetNameResult(pGuess, pAnswer)),
+                ItemClass = new(pGuess.ItemClass.DisplayName, GuessResultUtils.CompareEnumValues(pGuess.ItemClass.Id, pAnswer.ItemClass.Id)),
+                ReqLvl = new(pGuess.ReqLvl.ToString(), GuessResultUtils.CompareNumbers(pGuess.ReqLvl, pAnswer.ReqLvl, 20)),
+                ReqDex = new(pGuess.ReqDex.ToString(), GuessResultUtils.CompareNumbers(pGuess.ReqDex, pAnswer.ReqDex, 20)),
+                ReqInt = new(pGuess.ReqInt.ToString(), GuessResultUtils.CompareNumbers(pGuess.ReqInt, pAnswer.ReqInt, 20)),
+                ReqStr = new(pGuess.ReqStr.ToString(), GuessResultUtils.CompareNumbers(pGuess.ReqStr, pAnswer.ReqStr, 20)),
+                LeaguesIntroduced = new(GuessResultUtils.GetModelListString(pGuess.LeaguesIntroduced), GuessResultUtils.CompareLists(pGuess.LeaguesIntroduced, pAnswer.LeaguesIntroduced)),
+                ItemAspects = new(GuessResultUtils.GetModelListString(pGuess.ItemAspects), GuessResultUtils.CompareLists(pGuess.ItemAspects, pAnswer.ItemAspects)),
+                DropSources = new(GuessResultUtils.GetModelListString(pGuess.DropSources), GuessResultUtils.CompareLists(pGuess.DropSources, pAnswer.DropSources)),
+                DropTypes = new(GuessResultUtils.GetModelListString(pGuess.DropTypes), GuessResultUtils.CompareLists(pGuess.DropTypes, pAnswer.DropTypes))
             };
         }
 

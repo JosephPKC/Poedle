@@ -1,0 +1,26 @@
+.nav-bar {
+    margin: auto;
+    padding: 0;
+    max-width: fit-content;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-bar-item {
+    margin: 0;
+    padding: 5px;
+    flex: 1 1 auto;
+    background-image: linear-gradient(to top, var(--poe-orange), var(--poe-orange-dark));
+    border: 2px outset var(--poe-orange-dark);
+    color: var(--poe-tan);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-bar-item:hover {
+    background-color: var(--poe-black);
+    color: var(--poe-tan);
+    box-shadow: 0 2px 4px 0 var(--poe-orange), 0 3px 10px 0 var(--poe-orange);
+    transition: all 0.1s;
+}

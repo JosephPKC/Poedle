@@ -2,23 +2,14 @@
 {
     public class UniqueItemsResultExpModel : BaseResultExpModel
     {
-        public string ItemClass { get; set; } = string.Empty;
-        public ResultStates ItemClassResult { get; set; }
-        public string ReqLvl { get; set; } = string.Empty;
-        public ResultStates ReqLvlResult { get; set; }
-        public string ReqDex { get; set; } = string.Empty;
-        public ResultStates ReqDexResult { get; set; }
-        public string ReqInt { get; set; } = string.Empty;
-        public ResultStates ReqIntResult { get; set; }
-        public string ReqStr { get; set; } = string.Empty;
-        public ResultStates ReqStrResult { get; set; }
-        public string LeaguesIntroduced { get; set; } = string.Empty;
-        public ResultStates LeaguesIntroducedResult { get; set; }
-        public string ItemAspects { get; set; } = string.Empty;
-        public ResultStates ItemAspectsResult { get; set; }
-        public string DropSources { get; set; } = string.Empty;
-        public ResultStates DropSourcesResult { get; set; }
-        public string DropTypes { get; set; } = string.Empty;
-        public ResultStates DropTypesResult { get; set; }
+        public BaseResult ItemClass { get; set; } = new();
+        public BaseResult ReqLvl { get; set; } = new();
+        public BaseResult ReqDex { get; set; } = new();
+        public BaseResult ReqInt { get; set; } = new();
+        public BaseResult ReqStr { get; set; } = new();
+        public BaseResult LeaguesIntroduced { get; set; } = new();
+        public BaseResult ItemAspects { get; set; } = new();
+        public BaseResult DropSources { get; set; } = new();
+        public BaseResult DropTypes { get; set; } = new();
     }
 }

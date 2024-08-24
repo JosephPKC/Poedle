@@ -1,0 +1,17 @@
+.txt-skill-gem {
+    color: var(--poe-green);
+}
+
+.txt-skill-desc {
+    color: var(--poe-blue);
+}
+
+.fade-border-skill-gem {
+    height: 2px;
+    width: 100%;
+    background-image: radial-gradient(circle, var(--poe-green-dark), transparent 80%);
+}
+
+#div-unique-item-hints {
+    border: 2px solid var(--poe-orange-dark);
+}

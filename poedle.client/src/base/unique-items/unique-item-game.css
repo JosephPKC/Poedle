@@ -1,0 +1,22 @@
+.txt-flavour {
+    color: var(--poe-orange);
+    font-style: italic;
+}
+
+.txt-stat-mod {
+    color: var(--poe-blue);
+}
+
+.txt-unique-item {
+    color: var(--poe-orange);
+}
+
+.fade-border-unique-item {
+    height: 2px;
+    width: 100%;
+    background-image: radial-gradient(circle, var(--poe-orange-dark), transparent 80%);
+}
+
+#div-skill-gem-hints {
+    border: 2px solid var(--poe-green-dark);
+}
