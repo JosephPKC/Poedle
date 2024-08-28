@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ActionMeta, SingleValue } from "react-select";
 import { ApiTypes } from "../../api/api-type.ts";
 import { GeneralApi } from "../../api/general-api.ts";
-import { GuessesAreaProps, HintsAreaProps, ResultsAreaProps, StatsAreaProps } from "../base-game/base-area-props.ts";
+import { GuessesAreaProps, HintsAreaProps, StatsAreaProps, UniqueItemResultsAreaProps } from "../base-game/base-area-props.ts";
 import { DropDownItem, NullableDropDownItem, NullableDropDownItemList } from "../../common/drop-down-item/drop-down-item.ts";
 import { LoadingText } from "../../common/loading/loading-text.tsx";
 import { PageTitle } from "../../common/page-title/page-title.tsx";
@@ -125,7 +125,7 @@ export function UniqueItemsGame() {
         hints: hints
     };
 
-    const resultsArea: ResultsAreaProps = {
+    const resultsArea: UniqueItemResultsAreaProps = {
         results: results
     };
 
@@ -148,7 +148,7 @@ interface GameAreaProps {
     readonly isWin: boolean
     readonly guessesArea: GuessesAreaProps
     readonly hintsArea: HintsAreaProps
-    readonly resultsArea: ResultsAreaProps
+    readonly resultsArea: UniqueItemResultsAreaProps
     readonly statsArea: StatsAreaProps
 }
 

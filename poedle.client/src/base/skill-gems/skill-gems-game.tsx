@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ActionMeta, SingleValue } from "react-select";
 import { ApiTypes } from "../../api/api-type.ts";
 import { GeneralApi } from "../../api/general-api.ts";
-import { GuessesAreaProps, HintsAreaProps, ResultsAreaProps, StatsAreaProps } from "../base-game/base-area-props.ts";
+import { GuessesAreaProps, HintsAreaProps, SkillGemResultsAreaProps, StatsAreaProps } from "../base-game/base-area-props.ts";
 import { DropDownItem, NullableDropDownItem, NullableDropDownItemList } from "../../common/drop-down-item/drop-down-item.ts";
 import { LoadingText } from "../../common/loading/loading-text.tsx";
 import { PageTitle } from "../../common/page-title/page-title.tsx";
@@ -12,7 +12,7 @@ import { GuessSelectOptions } from "../../guesses/guess-select/guess-select.tsx"
 import { SkillGemsHintsArea } from "../../hints/hints-area.tsx";
 import { NullableAllHints } from "../../hints/hint/hint.ts";
 import { SkillGemResultsArea } from "../../results/results-area.tsx";
-import { NullableUniqueItemResult, NullableUniqueItemResultList } from "../../results/result/result.ts";
+import { NullableSkillGemResultList, NullableUniqueItemResult } from "../../results/result/result.ts";
 import { StatsArea } from "../../stats/stats-area.tsx";
 import { NullableStats } from "../../stats/stats/stats.ts";
 
@@ -25,7 +25,7 @@ export function SkillGemsGame() {
     /* States for storing from API */
     const [availGuesses, setAvailGuesses] = useState<NullableDropDownItemList>(null);
     const [hints, setHints] = useState<NullableAllHints>(null);
-    const [results, setResults] = useState<NullableUniqueItemResultList>(null);
+    const [results, setResults] = useState<NullableSkillGemResultList>(null);
     const [stats, setStats] = useState<NullableStats>(null);
     const [isWin, setIsWin] = useState<boolean>(false);
     /* States for handling flags, processing, and handlers */
@@ -126,7 +126,7 @@ export function SkillGemsGame() {
         hints: hints
     };
 
-    const resultsArea: ResultsAreaProps = {
+    const resultsArea: SkillGemResultsAreaProps = {
         results: results
     };
 
@@ -149,7 +149,7 @@ interface GameAreaProps {
     readonly isWin: boolean
     readonly guessesArea: GuessesAreaProps
     readonly hintsArea: HintsAreaProps
-    readonly resultsArea: ResultsAreaProps
+    readonly resultsArea: SkillGemResultsAreaProps
     readonly statsArea: StatsAreaProps
 }
 
