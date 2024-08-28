@@ -3,13 +3,14 @@
     padding: 5px;
     max-width: 500px;
     min-width: 250px;
-    width: 50%;
+    /*width: 50%;*/
     font-family: Fontin-Regular;
 }
 
 #div-guess-select {
     margin: 0;
     padding: 10px;
+    min-width: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
